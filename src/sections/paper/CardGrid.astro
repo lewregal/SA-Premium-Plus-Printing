@@ -1,0 +1,43 @@
+---
+// Paper / CardGrid. Eyebrow, H2, three cards on the paper pattern ground. Each card: optional photo frame,
+// title, line, and a card specific link label (never the same label twice, rigal-design-rules).
+// Fingerprint: layout 3-col-cards, headline bold-solid, density medium, background paper-pattern, effect none, mood steady.
+// Best for: services on home, offers, process steps. Any vertical.
+import MaskReveal from '../../effects/MaskReveal.astro';
+interface Card { title: string; text: string; href: string; cta: string; media?: { src?: string; alt?: string; label?: string } }
+interface Props { eyebrow?: string; headline?: string; line?: string; cards?: Card[]; photos?: boolean; shape?: string; id?: string }
+const { eyebrow = 'What we do', headline = 'Three ways we help', line, cards = [
+  { title: 'Roof repair', text: 'Leaks, missing shingles and flashing, found and fixed with photos of the work.', href: '/services/roof-repair', cta: 'Fix a leak', media: { label: 'Repair photo' } },
+  { title: 'Roof replacement', text: 'A full tear off and new roof with a written scope and a clean yard at the end.', href: '/services/roof-replacement', cta: 'Plan a new roof', media: { label: 'Replacement photo' } },
+  { title: 'Storm inspection', text: 'A free look after hail or wind, with a plain report you can hand to your insurer.', href: '/services/storm-inspection', cta: 'Book an inspection', media: { label: 'Inspection photo' } },
+], photos = true, shape = 'chamfer', id } = Astro.props;
+---
+<section class="sec ground-paper" id={id}>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow pill">{eyebrow}</span>
+      <h2 class="h2">{headline}</h2>
+      {line && <p class="lede">{line}</p>}
+    </div>
+    <div class="g3">
+      {cards.map((c) => (
+        <a class="card card-link" href={c.href}>
+          {photos && <MaskReveal src={c.media?.src} alt={c.media?.alt} label={c.media?.label} shape={`wide ${shape}`} />}
+          <h3 class="h3">{c.title}</h3>
+          <p class="grow">{c.text}</p>
+          <span class="card-go">{c.cta}<span class="card-arrow" aria-hidden="true">&rarr;</span></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .card-link { color: inherit; text-decoration: none; }
+  .card-link:hover { color: inherit; }
+  .card-link :global(.frame) { aspect-ratio: 16 / 10; margin: calc(var(--s-6) * -1) calc(var(--s-6) * -1) var(--s-2); border-radius: var(--r-card) var(--r-card) 0 0; }
+  .card-link .h3 { transition: color var(--t-fast) var(--ease); }
+  .card-link:hover .h3 { color: var(--accent); }
+  .card-go { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: var(--w-strong); letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); }
+  .card-arrow { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); }
+  .card-link:hover .card-arrow { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateX(4px); }
+</style>

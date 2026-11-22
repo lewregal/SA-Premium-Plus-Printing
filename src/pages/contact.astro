@@ -1,0 +1,44 @@
+---
+// Contact page. The form posts to the client's inbox through FormSubmit (never to Rigal Media); the client
+// clicks the activation email at launch. Never submit this form from a preview (it binds activation per domain).
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import AreaMap from '../sections/areas/AreaMap.astro';
+import MaskReveal from '../effects/MaskReveal.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`Contact | ${SITE.short}`} description={`Call, text or message ${SITE.short} in ${SITE.city}. ${SITE.phone}.`} path="/contact">
+  <Banner crumbs={[{ name: 'Contact', href: '/contact' }]} eyebrow={`Contact ${SITE.short}, ${SITE.city}, ${SITE.region}`} headline="Tell us what you are seeing" line={`Call ${SITE.phone}, or send the form and we reply during office hours, ${SITE.hours.text}.`} primary={{ label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` }} />
+  <section class="sec ground-card">
+    <div class="wrap split" style="align-items: start">
+      <form class="form" action={`https://formsubmit.co/${SITE.email}`} method="POST">
+        <input type="hidden" name="_next" value={`${SITE.domain}/thank-you`}>
+        <input type="hidden" name="_subject" value={`Website message for ${SITE.short}`}>
+        <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email"></div>
+        <div class="field"><label for="message">What is going on</label><textarea id="message" name="message" rows="5" required></textarea></div>
+        <div class="btnrow"><button class="btn btn-primary" type="submit">Send the message</button></div>
+      </form>
+      <div class="stack">
+        <MaskReveal shape="arch" label="Office or crew photo" />
+        <h2 class="h3">Office</h2>
+        <p>{SITE.address.street}<br>{SITE.address.city}, {SITE.address.region} {SITE.address.zip}</p>
+        <p>{SITE.hours.text}</p>
+        <p class="contact-links"><a href={`tel:${SITE.phoneE164}`}>{SITE.phone}</a><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+      </div>
+    </div>
+  </section>
+  <AreaMap eyebrow="Find us" headline="On the map" line="Tap the map for turn by turn directions." />
+</Base>
+<style>
+  .form { display: grid; gap: var(--s-4); text-align: left; }
+  .contact-links { display: flex; flex-direction: column; gap: 4px; }
+  .contact-links a { display: inline-flex; align-items: center; min-height: 44px; }
+  .stack :global(.frame) { max-width: 320px; aspect-ratio: 4 / 3; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; font-weight: var(--w-strong); letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand); }
+  .field input, .field textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1.5px solid var(--muted); border-radius: var(--r-btn); padding: 12px 14px; min-height: 50px; width: 100%; }
+  .field textarea { min-height: 140px; resize: vertical; }
+  .field input:focus, .field textarea:focus { outline: 3px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+</style>

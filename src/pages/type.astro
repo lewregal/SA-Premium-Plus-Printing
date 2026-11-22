@@ -1,0 +1,164 @@
+---
+// Type specimen: 12 font pairings, each rendered twice in real local business copy (a bar and a roofer), so Lou can
+// pick a house shortlist by number. Pairings live in src/data/type-specimen.ts; the families they name are listed
+// under SPECIMEN in astro.config.mjs. Not in the sitemap, noindex. A client build deletes this page and that list.
+import Base from '../layouts/Base.astro';
+import { Font } from 'astro:assets';
+import { PAIRINGS } from '../data/type-specimen';
+import { TYPE_PRESETS, HOUSE_SHORTLIST } from '../data/type-presets';
+import { CONFIG } from '../site.config';
+const presetByN = Object.fromEntries(Object.values(TYPE_PRESETS).map((p) => [p.n, p]));
+
+// every family this page needs, once each; the house faces already render in Base.astro
+const houseVars = new Set(['--font-display', '--font-body', '--font-accent']);
+const vars = new Set<string>();
+for (const p of PAIRINGS) for (const f of [p.display, p.body, p.accent]) if (f && !houseVars.has(f.var)) vars.add(f.var);
+
+const SAMPLES = [
+  {
+    id: 'bar', kicker: 'Sports Bar in San Antonio', name: '[Sample Bar]',
+    headline: 'Cold drafts, every game, no cover.',
+    lede: 'Thirty taps, the Spurs on every screen, and a kitchen that runs until close. [Street], across from [landmark].',
+    price: { amount: '$4.50', note: 'domestic pints, Monday to Thursday until 7 PM' },
+    hours: [['Mon to Thu', '4 PM to 12 AM'], ['Fri and Sat', '12 PM to 2 AM'], ['Sunday', '12 PM to 10 PM']],
+    primary: 'See this week', secondary: 'Reserve a table',
+  },
+  {
+    id: 'roof', kicker: 'Roofing Contractor in San Antonio', name: '[Sample Roofing]',
+    headline: 'Storm damage fixed before the next one.',
+    lede: 'Licensed, insured and local. A real inspection with photos, a written estimate the same day, and a crew that cleans up after itself.',
+    price: { amount: '$0', note: 'inspections, with a written estimate in 24 hours' },
+    hours: [['Mon to Fri', '7:30 AM to 6 PM'], ['Saturday', '8 AM to 2 PM'], ['Emergency', '24 hours']],
+    primary: 'Get a free estimate', secondary: 'Call (210) 555 0100',
+  },
+];
+const phone = '(210) 555 0100';
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+<Base title="Type specimen" description="Twelve font pairings for the Rigal Astro starter, set in local business copy." path="/type" noindex>
+  <Fragment slot="head">{[...vars].map((v) => <Font cssVariable={v as any} />)}</Fragment>
+
+  <section class="ty-intro ground-card">
+    <div class="wrap">
+      <span class="eyebrow pill">Rigal Astro starter</span>
+      <h1 class="h1">Type specimen</h1>
+      <p class="lede">Twelve pairings, each set twice: a bar and a roofer, same copy every time. Every pairing is a look from a1.gallery (usually set in a paid face) matched to the closest family in Google Fonts or Fontshare, loaded through Astro's fonts feature and served from the site. Three are the house shortlist (marked below): set <code>type</code> in <code>src/site.config.ts</code> to <code>plex</code>, <code>druk</code> or <code>screamer</code> and the whole site follows. The current build runs <strong>{TYPE_PRESETS[CONFIG.type]?.label || CONFIG.type}</strong>.</p>
+      <ul class="ty-key small">
+        <li>What each card shows: kicker pill, headline, lede, a price, the phone number, hours, and the two buttons. Numbers are set with tabular figures.</li>
+        <li>Fontshare faces are the closer match where they are used; Google is the default when the two are close.</li>
+        <li>Speed rule for every pairing: at most two families plus an optional accent for numbers, variable files, Latin only.</li>
+      </ul>
+      <nav aria-label="Pairings" class="ty-index">
+        <ul class="chips">{PAIRINGS.map((p) => <li><a href={`#p-${p.n}`} class:list={{ 'is-house': HOUSE_SHORTLIST.includes(p.n) }}>{p.n}. {p.name}{HOUSE_SHORTLIST.includes(p.n) && <span class="sr-only"> (house shortlist)</span>}</a></li>)}</ul>
+      </nav>
+    </div>
+  </section>
+
+  {PAIRINGS.map((p, i) => (
+    <section
+      class:list={['ty-pair', i % 2 ? 'ground-card' : 'ground-paper', { 'is-house': !!presetByN[p.n] }]}
+      id={`p-${p.n}`}
+      aria-labelledby={`p-${p.n}-title`}
+      style={`--pd: var(${p.display.var}); --pb: var(${p.body.var}); --pa: var(${p.accent ? p.accent.var : p.body.var}); --pd-w: ${p.display.w}; --pd-ls: ${p.display.ls ?? '-0.02em'}; --pd-lh: ${p.display.lh ?? 0.96}; --pd-scale: ${p.display.scale ?? 1}; --pd-stretch: ${p.display.stretch ?? '100%'}; --pd-tt: ${p.display.upper ? 'uppercase' : 'none'};`}
+    >
+      <div class="wrap">
+        <header class="ty-head">
+          <div class="ty-num" aria-hidden="true">{String(p.n).padStart(2, '0')}</div>
+          <div class="ty-meta">
+            <p class="h2 ty-title" id={`p-${p.n}-title`}>{p.n}. {p.name}</p>
+            {presetByN[p.n] && <p class="ty-house"><span class="ty-house-pill">House shortlist</span> preset <code>{presetByN[p.n].id}</code>{CONFIG.type === presetByN[p.n].id && <>, the current build</>}</p>}
+            <p class="ty-rel">{p.relationship}</p>
+            <dl class="ty-facts">
+              <div><dt>Reads like</dt><dd>{p.inspiration.reads}. Seen on <a href={p.inspiration.url} target="_blank" rel="noopener">{p.inspiration.site}</a>.</dd></div>
+              <div><dt>Display</dt><dd>{p.display.family} <span class="ty-src">{p.display.source}</span></dd></div>
+              <div><dt>Body</dt><dd>{p.body.family} <span class="ty-src">{p.body.source}</span></dd></div>
+              {p.accent && <div><dt>Numbers</dt><dd>{p.accent.family} <span class="ty-src">{p.accent.source}</span></dd></div>}
+            </dl>
+          </div>
+        </header>
+
+        <div class="ty-cards">
+          {SAMPLES.map((s) => (
+            <article class:list={['ty-card', `ty-${s.id}`, { 'on-dark': s.id === 'bar' }]} data-shot={`${p.n}-${slug(p.name)}-${s.id}`}>
+              <span class="eyebrow pill">{s.kicker}</span>
+              <p class="ty-display">{s.headline}</p>
+              <p class="ty-lede">{s.lede}</p>
+              <p class="ty-price"><span class="ty-amount">{s.price.amount}</span> <span class="ty-note">{s.price.note}</span></p>
+              <a class="ty-phone" href="tel:+12105550100">{phone}</a>
+              <dl class="ty-hours">{s.hours.map(([d, h]) => <div><dt>{d}</dt><dd>{h}</dd></div>)}</dl>
+              <div class="btnrow">
+                <a class="btn btn-primary" href="#top">{s.primary}</a>
+                <a class="btn btn-secondary" href="#top">{s.secondary}</a>
+              </div>
+              <span class="ty-tag">{s.name}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .ty-intro { padding: calc(var(--s-9) + 40px) 0 var(--s-8); }
+  .ty-intro .wrap { display: flex; flex-direction: column; gap: var(--s-5); }
+  .ty-key { max-width: var(--measure); padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+  .ty-index { margin-top: var(--s-2); }
+
+  .ty-pair { position: relative; isolation: isolate; padding: var(--s-8) 0; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+  .ty-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--s-5); align-items: start; margin-bottom: var(--s-6); }
+  .ty-num { font-family: var(--pd); font-weight: var(--pd-w); font-stretch: var(--pd-stretch); font-size: clamp(3rem, 2rem + 4vw, 5rem); line-height: 1; letter-spacing: -0.02em; color: var(--brand); opacity: 0.18; font-variant-numeric: tabular-nums; }
+  .ty-meta { display: flex; flex-direction: column; gap: var(--s-3); max-width: 820px; }
+  .ty-title { font-family: var(--pd); font-weight: var(--pd-w); font-stretch: var(--pd-stretch); text-transform: var(--pd-tt); letter-spacing: var(--pd-ls); font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem); line-height: 1.05; }
+  .ty-display, .ty-title { text-transform: var(--pd-tt); }
+  .ty-rel { font-size: var(--fs-lede); line-height: 1.5; max-width: var(--measure); }
+  .ty-house { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--fs-small); color: var(--muted); }
+  .ty-house code { font: 600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+  .ty-house-pill { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: var(--r-pill); background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: var(--w-strong); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ty-pair.is-house { box-shadow: inset 6px 0 0 var(--accent); }
+  .chips a.is-house { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .ty-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--s-3) var(--s-5); margin-top: var(--s-2); font-size: var(--fs-small); }
+  .ty-facts > div:first-child { grid-column: 1 / -1; }
+  .ty-facts dt { font-size: var(--fs-eyebrow); font-weight: var(--w-strong); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .ty-facts dd { color: var(--ink); line-height: 1.5; }
+  .ty-src { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: var(--r-pill); border: 1px solid var(--line); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); vertical-align: 1px; }
+
+  .ty-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
+  .ty-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); padding: clamp(1.5rem, 1rem + 2vw, 2.75rem); border-radius: var(--r-card); border: 1px solid var(--line); background: var(--card); text-align: left; font-family: var(--pb); min-width: 0; }
+  .ty-card { isolation: isolate; overflow: hidden; }
+  .ty-bar { background: var(--deep); border-color: transparent; }
+  .ty-bar::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--tx-wash) center / 480px 480px repeat; opacity: 0.35; mix-blend-mode: soft-light; pointer-events: none; }
+  .ty-card .eyebrow { font-family: var(--pb); }
+  .ty-display { font-family: var(--pd); font-weight: var(--pd-w); font-stretch: var(--pd-stretch); text-transform: var(--pd-tt); letter-spacing: var(--pd-ls); line-height: var(--pd-lh); font-size: calc(clamp(2.25rem, 1rem + 3.4vw, 3.6rem) * var(--pd-scale)); color: var(--brand); text-wrap: balance; max-width: 14ch; }
+  .ty-bar .ty-display { color: var(--on-deep-strong); }
+  .ty-lede { font-size: var(--fs-lede); line-height: 1.5; max-width: 40ch; }
+  .ty-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .ty-amount { font-family: var(--pa); font-weight: var(--pd-w); font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem); line-height: 1; letter-spacing: -0.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .ty-bar .ty-amount { color: var(--star); }
+  .ty-note { font-size: var(--fs-small); color: var(--muted); }
+  .ty-bar .ty-note { color: var(--on-deep); }
+  .ty-phone { font-family: var(--pa); font-weight: var(--w-strong); font-size: 1.25rem; letter-spacing: 0.01em; color: var(--brand); text-decoration: none; font-variant-numeric: tabular-nums; }
+  .ty-hours { display: grid; grid-template-columns: auto auto; gap: 4px var(--s-5); font-size: var(--fs-small); align-self: stretch; max-width: 360px; }
+  .ty-hours div { display: contents; }
+  .ty-hours dt { color: var(--muted); }
+  .ty-hours dd { font-family: var(--pa); font-variant-numeric: tabular-nums; font-weight: var(--w-strong); text-align: right; }
+  .ty-bar .ty-hours dt { color: var(--on-deep); opacity: 0.8; }
+  .ty-card .btn { font-family: var(--pb); }
+  .ty-card .btnrow { margin-top: var(--s-2); }
+  .ty-tag { position: absolute; right: 14px; top: 14px; font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.04em; padding: 5px 8px; border-radius: 6px; background: rgb(29 35 42 / 0.08); color: var(--muted); }
+  .ty-bar .ty-tag { background: rgb(255 255 255 / 0.12); color: var(--on-deep); }
+  /* dark card: the shared .on-dark rules recolor the pill and the secondary button; the pill needs its own ground */
+  .ty-bar .eyebrow.pill { background: rgb(255 255 255 / 0.1); border-color: rgb(255 255 255 / 0.3); color: #fff; }
+
+  @media (max-width: 900px) {
+    .ty-cards { grid-template-columns: minmax(0, 1fr); }
+    .ty-head { grid-template-columns: minmax(0, 1fr); }
+    .ty-num { display: none; }
+    .ty-meta, .ty-facts, .ty-rel { text-align: left; align-items: flex-start; }
+    .ty-card { align-items: flex-start; }
+    .ty-card .btnrow { justify-content: flex-start; width: 100%; }
+    .ty-card .eyebrow { justify-content: flex-start; }
+    .ty-card { padding-top: calc(var(--s-6) + 20px); }   /* room for the sample tag above the pill */
+    .ty-key { text-align: left; }
+  }
+</style>

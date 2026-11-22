@@ -1,0 +1,12 @@
+---
+// Word stagger: words rise and fade in one after another. For short lines (a lede, a proof line, a sub headline)
+// below the hero; the engine is GSAP SplitText (type words) loaded lazily. The full sentence stays in the DOM as
+// one text node (.fx-text); GSAP splits the aria-hidden copy (.fx-anim) and the real text returns when it is done.
+// Transform and opacity only. Reduced motion, no JS, or already in view when GSAP arrives: plain visible text.
+interface Props { text: string; as?: 'h1' | 'h2' | 'h3' | 'p' | 'span'; class?: string }
+const { text, as: Tag = 'p', class: cls = 'lede' } = Astro.props;
+---
+<Tag class:list={['fx-gsap fx-words', cls]} data-fx="word-stagger" data-gsap="word-stagger">
+  <span class="fx-text">{text}</span>
+  <span class="fx-anim" aria-hidden="true">{text}</span>
+</Tag>

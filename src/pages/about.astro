@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import Narrative from '../sections/mark/Narrative.astro';
+import TrustLine from '../sections/trust/TrustLine.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`About | ${SITE.short}`} description={`Who is behind ${SITE.short} and how the crew works.`} path="/about">
+  <Banner crumbs={[{ name: 'About', href: '/about' }]} eyebrow={`About ${SITE.short}, ${SITE.city}, ${SITE.region}`} headline="The people who answer the phone" line="Who we are, how we quote and what you can expect on the day." />
+  <TrustLine />
+  <Narrative link={{ label: 'See the services', href: '/services' }} />
+  <WashCta />
+</Base>

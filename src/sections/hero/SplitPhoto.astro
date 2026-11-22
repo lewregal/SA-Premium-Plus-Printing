@@ -1,0 +1,51 @@
+---
+// Hero / SplitPhoto. Copy on the left, one masked photo on the right with a small proof card overlapping it.
+// Fingerprint: layout split-left, headline bold-solid keyword, density medium, background paper-pattern, effect keyword-highlighter, mood steady.
+// Best for: Human made, Editorial. Roofing and contractors, PT and clinics, pest and home services.
+// Fills the viewport (rigal-design-rules hero height). The headline renders complete at first paint; its one motion
+// moment is the CSS only Keyword on the service or city word. The marquee goes in sections/marquee/MarqueeBand below.
+import type { SectionProps } from '../types';
+import Proof from '../../components/Proof.astro';
+import Actions from '../../components/Actions.astro';
+import MaskReveal from '../../effects/MaskReveal.astro';
+import KeywordHeadline from '../../effects/KeywordHeadline.astro';
+import { SITE } from '../../data/site';
+interface Props extends SectionProps { shape?: string; kicker?: boolean }
+const { eyebrow = `${SITE.category} in ${SITE.city}, ${SITE.region}`, headline = 'A roof you stop thinking about', line = 'Repairs, replacements and storm inspections for homes across the area, done by a crew you can call back.', proof, primary, secondary = { label: 'See our work', href: '/services' }, media = { label: 'Client photo, 4:5' }, shape = 'pitch', kicker = true, keyword, keywordVariant = 'highlighter', id } = Astro.props;
+---
+<section class="hero hero-split ground-paper" id={id}>
+  <div class="wrap hero-grid">
+    <div class="stack hero-copy">
+      {kicker ? <h1 class="crumb">{eyebrow}</h1> : <span class="eyebrow">{eyebrow}</span>}
+      <KeywordHeadline text={headline} keyword={keyword} variant={keywordVariant} as={kicker ? 'p' : 'h1'} class="h1" />
+      <p class="lede">{line}</p>
+      <Proof text={proof} />
+      <Actions primary={primary} secondary={secondary} />
+    </div>
+    <div class="hero-media">
+      <MaskReveal src={media.src} alt={media.alt} label={media.label} shape={shape} />
+      <div class="hero-badge card">
+        <strong>Free estimates</strong>
+        <span class="small">Same week in most of the area</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--s-9) + 40px) 0 var(--s-8); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; width: 100%; }
+  .hero-copy { max-width: 560px; gap: var(--s-5); }
+  .hero-media { position: relative; }
+  .hero-media :global(.frame) { aspect-ratio: 4 / 5; max-height: 72vh; }
+  .hero-badge { position: absolute; left: -28px; bottom: 36px; padding: 16px 20px; gap: 2px; max-width: 240px; }
+  .hero-badge strong { font-family: var(--f-display); font-size: 20px; color: var(--brand); }
+  @media (max-width: 900px) {
+    .hero { padding-top: calc(var(--s-7) + 48px); }
+    .hero-grid { grid-template-columns: 1fr; gap: var(--s-5); }
+    .hero-copy { gap: var(--s-4); }
+    .hero-media { order: -1; padding-bottom: 44px; }
+    .hero-media :global(.frame) { max-height: 24vh; aspect-ratio: 16 / 9; }
+    .hero-badge { left: 12px; bottom: 0; }  /* half over the frame edge, never over the photo's center */
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+// Reviews / ReviewGrid. Three review cards on the paper ground with stars, the quote, name, date and a link to the
+// source. With an empty list it shows the "read them on Google" card instead, so no invented review ever ships.
+// Fingerprint: layout 3-col-cards, headline bold-solid, density medium, background paper-pattern, effect counter-roll, mood steady.
+import CounterRoll from '../../effects/CounterRoll.astro';
+import { SITE } from '../../data/site';
+interface Review { text: string; author: string; when: string; url?: string; service?: string }
+interface Props { eyebrow?: string; headline?: string; reviews?: Review[]; id?: string }
+const { eyebrow = 'Google reviews', headline = 'What people say after the job', reviews = [
+  { text: '[Placeholder review 1. Replace with a real Google review, word for word.]', author: 'Reviewer name', when: 'Month year', url: SITE.googleReviews },
+  { text: '[Placeholder review 2. Replace with a real Google review, word for word.]', author: 'Reviewer name', when: 'Month year', url: SITE.googleReviews },
+  { text: '[Placeholder review 3. Replace with a real Google review, word for word.]', author: 'Reviewer name', when: 'Month year', url: SITE.googleReviews },
+], id } = Astro.props;
+const star = 'M8 1l2.1 4.4 4.8.6-3.5 3.3.9 4.7L8 11.7 3.7 14l.9-4.7L1.1 6l4.8-.6z';
+---
+<section class="sec ground-paper" id={id}>
+  <div class="wrap">
+    <div class="rev-head">
+      <div class="sec-head" style="margin: 0">
+        <span class="eyebrow pill">{eyebrow}</span>
+        <h2 class="h2">{headline}</h2>
+      </div>
+      {SITE.reviewCount > 0 && <CounterRoll value={SITE.reviewCount} label="Google reviews" />}
+    </div>
+    {reviews.length === 0 ? (
+      <div class="card" style="max-width: 640px">
+        <svg width="92" height="16" viewBox="0 0 92 16" role="img" aria-label="5 out of 5 stars"><g fill="var(--star)">{[0, 19, 38, 57, 76].map((x) => <path transform={`translate(${x} 0)`} d={star} />)}</g></svg>
+        <p class="grow">Read what customers across the area say on our Google profile, in their own words.</p>
+        <div class="btnrow"><a class="btn btn-primary" href={SITE.googleReviews} rel="noopener">Read our Google reviews</a></div>
+      </div>
+    ) : (
+      <div class="g3">
+        {reviews.map((r) => (
+          <figure class="card">
+            <svg width="92" height="16" viewBox="0 0 92 16" role="img" aria-label="5 out of 5 stars"><g fill="var(--star)">{[0, 19, 38, 57, 76].map((x) => <path transform={`translate(${x} 0)`} d={star} />)}</g></svg>
+            <blockquote class="grow"><p>{r.text}</p></blockquote>
+            <figcaption class="small">{[r.author, r.when, r.service].filter(Boolean).join(', ')}{r.url && <> <a href={r.url} rel="noopener">View on Google</a></>}</figcaption>
+          </figure>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+<style>
+  .rev-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--s-5); margin-bottom: var(--s-8); }
+  figcaption a { display: inline-block; padding: 4px 0; margin: -4px 0; color: var(--brand); }
+  @media (max-width: 900px) { .rev-head { flex-direction: column; align-items: center; } }
+</style>

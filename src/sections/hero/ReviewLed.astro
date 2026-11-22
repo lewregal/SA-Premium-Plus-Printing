@@ -1,0 +1,60 @@
+---
+// Hero / ReviewLed. A real customer review, quoted word for word, carries the hero: big quote on the right in a
+// card that overlaps the photo, headline and action on the left. Ported from the Kissed by the Caribbean inner
+// page heroes (HeroPhoto plus HeroReview). Fingerprint: layout split-right-card, headline bold-solid, density medium,
+// background brand-wash, effect keyword-highlighter, mood steady. Best for: Human made, Editorial. Any vertical with strong reviews.
+// The headline renders complete at first paint; the one motion moment is the CSS only Keyword.
+import type { SectionProps } from '../types';
+import Proof from '../../components/Proof.astro';
+import Actions from '../../components/Actions.astro';
+import Media from '../../components/Media.astro';
+import KeywordHeadline from '../../effects/KeywordHeadline.astro';
+import { SITE } from '../../data/site';
+interface Review { text: string; author: string; when: string; url?: string }
+interface Props extends SectionProps { review?: Review; kicker?: boolean; keyword?: string; keywordVariant?: 'highlighter' | 'underline' | 'fill' }
+const { eyebrow = `${SITE.category} in ${SITE.city}, ${SITE.region}`, headline = 'The roofing crew your neighbors already called', line = 'Read what people across the area say, then book the same visit they did.', proof, primary, secondary, media = { label: 'Client photo' }, review = { text: '[Placeholder review. A real Google review, quoted word for word, goes here. Never write one.]', author: 'Reviewer name', when: 'Month year', url: SITE.googleReviews }, kicker = true, keyword, keywordVariant = 'highlighter', id } = Astro.props;
+const star = 'M8 1l2.1 4.4 4.8.6-3.5 3.3.9 4.7L8 11.7 3.7 14l.9-4.7L1.1 6l4.8-.6z';
+---
+<section class="hero hero-review ground-wash on-dark" id={id}>
+  <div class="wrap hero-grid">
+    <div class="stack hero-copy">
+      {kicker ? <h1 class="crumb">{eyebrow}</h1> : <span class="eyebrow">{eyebrow}</span>}
+      <KeywordHeadline text={headline} keyword={keyword} variant={keywordVariant} as={kicker ? 'p' : 'h1'} class="h1" />
+      <p class="lede">{line}</p>
+      <Proof text={proof} />
+      <Actions primary={primary} secondary={secondary} />
+    </div>
+    <div class="hero-photo">
+      <div class="frame arch"><Media media={media} eager /></div>
+      <figure class="review-card">
+        <svg width="92" height="16" viewBox="0 0 92 16" role="img" aria-label="5 out of 5 stars"><g fill="var(--star)">{[0, 19, 38, 57, 76].map((x) => <path transform={`translate(${x} 0)`} d={star} />)}</g></svg>
+        <blockquote><p>{review.text}</p></blockquote>
+        <figcaption><span class="who">{review.author}</span><span class="src">Google review, {review.when}{review.url && <> <a href={review.url} rel="noopener">Read on Google</a></>}</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--s-9) + 40px) 0 var(--s-8); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; width: 100%; }
+  .hero-copy { max-width: 540px; gap: var(--s-5); }
+  .hero-photo { position: relative; width: min(100%, 460px); margin-left: auto; padding-bottom: 72px; }
+  .hero-photo .frame { height: min(560px, 64vh); aspect-ratio: auto; box-shadow: var(--shadow-1); }
+  .review-card { position: absolute; left: -160px; right: -16px; bottom: 0; display: grid; grid-template-columns: minmax(0, 1fr) 170px; grid-template-areas: "stars meta" "quote meta"; column-gap: 20px; row-gap: 8px; padding: 18px 22px; border-radius: var(--r-card); background: var(--card); color: var(--ink); box-shadow: var(--shadow-1); text-align: left; }
+  .review-card > svg { grid-area: stars; }
+  .review-card blockquote { grid-area: quote; }
+  .review-card blockquote p { color: var(--ink); font-size: 16px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .review-card figcaption { grid-area: meta; align-self: center; padding-left: 20px; border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+  .review-card .who { font-weight: var(--w-strong); color: var(--brand); }
+  .review-card a { color: var(--brand); display: inline-block; padding: 4px 0; margin: -4px 0; }
+  @media (max-width: 1200px) { .review-card { left: -40px; } }
+  @media (max-width: 900px) {
+    .hero { padding-top: calc(var(--s-8) + 48px); }
+    .hero-grid { grid-template-columns: 1fr; gap: var(--s-6); }
+    .hero-photo { width: 100%; margin: 0; padding-bottom: 0; }
+    .hero-photo .frame { height: 34vh; max-width: 340px; margin: 0 auto; }
+    .review-card { position: relative; left: 0; right: 0; margin: -64px 8px 0; grid-template-columns: 1fr; grid-template-areas: "stars" "quote" "meta"; }
+    .review-card figcaption { padding-left: 0; border-left: 0; }
+  }
+</style>

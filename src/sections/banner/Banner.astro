@@ -1,0 +1,41 @@
+---
+// Banner / Banner. Top of every inner page: breadcrumbs, kicker H1, display headline, one line, primary action,
+// proof line, over the brand wash (photo under a flat overlay when `media` is given).
+// Fingerprint: layout centered-column, headline bold-solid keyword, density low, background brand-wash, effect keyword-underline, mood steady.
+// Renders complete at first paint; the one motion moment is the CSS only Keyword on the service or city word.
+import type { SectionProps } from '../types';
+import Proof from '../../components/Proof.astro';
+import Actions from '../../components/Actions.astro';
+import KeywordHeadline from '../../effects/KeywordHeadline.astro';
+import { SITE } from '../../data/site';
+interface Crumb { name: string; href: string }
+interface Props extends SectionProps { crumbs?: Crumb[]; keyword?: string; keywordVariant?: 'highlighter' | 'underline' | 'fill' }
+const { crumbs = [{ name: 'Services', href: '/services' }, { name: 'Roof repair', href: '/services/roof-repair' }], eyebrow = `Roof Repair in ${SITE.city}, ${SITE.region}`, headline = 'Leaks found and fixed the same visit', line = 'Most repairs are quoted on site and finished the same day.', proof, primary, secondary, media, keyword, keywordVariant = 'underline', id } = Astro.props;
+import { keywordCandidates } from '../../effects/keyword';
+// the banner's keyword comes from its own kicker first (the service on this page), then the site data
+const candidates = keywordCandidates([eyebrow.replace(/\s+in\s+.*$/i, ''), ...eyebrow.split(/\s+/)]);
+---
+<section class="banner ground-wash on-dark" id={id} style={media?.src ? `--img:url(${media.src})` : undefined}>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      {crumbs.map((c, i) => <><span aria-hidden="true">/</span>{i === crumbs.length - 1 ? <span aria-current="page">{c.name}</span> : <a href={c.href}>{c.name}</a>}</>)}
+    </nav>
+    <div class="stack banner-inner">
+      <h1 class="crumb">{eyebrow}</h1>
+      <KeywordHeadline text={headline} keyword={keyword} variant={keywordVariant} as="p" class="h1" candidates={candidates} />
+      <p class="lede">{line}</p>
+      <Proof text={proof} />
+      <Actions primary={primary} secondary={secondary} />
+    </div>
+  </div>
+</section>
+<style>
+  .banner { position: relative; isolation: isolate; overflow: hidden; padding: calc(var(--s-9) + 56px) 0 var(--s-9); }
+  .banner[style*="--img"]::after { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--img) center / cover no-repeat; opacity: 0.34; filter: grayscale(0.6); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: var(--s-5); color: var(--on-deep); }
+  .crumbs a { color: var(--on-deep); display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; margin: -10px 0; }
+  .banner-inner { max-width: 760px; gap: var(--s-5); }
+  .banner .h1 { font-size: clamp(2.25rem, 1.2rem + 4vw, 4.25rem); }
+  @media (max-width: 900px) { .crumbs { justify-content: center; } }
+</style>

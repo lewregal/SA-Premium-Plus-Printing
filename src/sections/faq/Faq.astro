@@ -1,0 +1,40 @@
+---
+// Faq / Faq. Split: heading column on the left with a call line, details list on the right (first open).
+// Mirror the same pairs into FAQPage schema on the page. Fingerprint: layout split-left-head, headline bold-solid,
+// density high, background card-plain, effect none, mood calm. Best for: every service page and the home page.
+import { SITE } from '../../data/site';
+interface QA { q: string; a: string }
+interface Props { eyebrow?: string; headline?: string; items?: QA[]; id?: string }
+const { eyebrow = 'Good to know', headline = 'Questions people ask before they book', items = [
+  { q: 'How soon can someone come out?', a: 'Most visits are scheduled within the week. After a storm we add evening slots and work through the list in the order calls come in.' },
+  { q: 'Do you give a written price?', a: 'Yes. Every job gets a written scope and price before any work starts, and the price does not change unless you change the scope.' },
+  { q: 'Will you work with my insurance company?', a: 'We document the damage with photos and measurements and give you a report your adjuster can read. You stay in control of the claim.' },
+  { q: 'What happens to the old materials?', a: 'Everything goes in our trailer the same day and we run a magnet over the yard before we leave.' },
+], id } = Astro.props;
+---
+<section class="sec ground-card" id={id}>
+  <div class="wrap split faq-split">
+    <div class="stack" style="max-width: 420px">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="h2">{headline}</h2>
+      <p class="small">Something else? Call or text <a href={`tel:${SITE.phoneE164}`}>{SITE.phone}</a>.</p>
+    </div>
+    <div class="faq">
+      {items.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>)}
+    </div>
+  </div>
+</section>
+<style>
+  .faq-split { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-of-type { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; min-height: 44px; font-family: var(--f-display); font-weight: var(--w-heading); font-size: var(--fs-h3); line-height: 1.2; color: var(--brand); transition: color var(--t-fast) var(--ease); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); font-family: var(--f-body); font-weight: 300; font-size: 24px; color: var(--accent); transition: transform var(--t-slow) var(--ease); }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq summary:hover { color: var(--accent); }
+  .faq details p { padding: 0 0 24px; max-width: var(--measure); }
+  .faq details[open] > p { animation: rg-rise var(--t-slow) var(--ease) both; }
+  @keyframes rg-rise { from { opacity: 0; transform: translateY(8px); } }
+  @media (max-width: 900px) { .faq-split { grid-template-columns: 1fr; } }
+</style>

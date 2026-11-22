@@ -1,0 +1,20 @@
+{
+  "name": "rigal-astro-template",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rigal Media starter for local service business sites. Tokens, sections, effects and a kit page.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "node scripts/preview.mjs",
+    "qa": "node scripts/qa.mjs",
+    "kit:shots": "node scripts/kit-shots.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/vercel": "^11.0.20",
+    "astro": "^7.4.0",
+    "gsap": "^3.15.1"
+  }
+}

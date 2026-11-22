@@ -1,0 +1,16 @@
+---
+// Button row: the booking slot. A solid primary (booking on: /book; off: the site's main action), an optional outline
+// secondary, and the next open windows line under it when booking is on. Used by every hero, the banner and the CTA.
+import { SITE } from '../data/site';
+import { bookingAction } from '../site.config';
+import type { Action } from '../sections/types';
+import NextOpen from './NextOpen.astro';
+interface Props { primary?: Action; secondary?: Action; class?: string }
+// The primary slot is the booking slot: with booking on it goes to /book, off it falls back to the site's main action.
+const { primary = bookingAction(SITE.primaryAction), secondary, class: cls = '' } = Astro.props;
+---
+<div class:list={['btnrow', cls]}>
+  <a class="btn btn-primary" href={primary.href}>{primary.label}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  {secondary && <a class="btn btn-secondary" href={secondary.href}>{secondary.label}</a>}
+</div>
+<NextOpen />

@@ -1,0 +1,36 @@
+---
+// Mark / Narrative. Split story section on the card ground with the ghost brand mark in the margin: masked
+// photo on one side, eyebrow, H2 with weight shift, two short paragraphs, three facts rail and a text link on the other.
+// Fingerprint: layout split-right-photo, headline weight-shift, density medium, background card-mark, effect weight-shift, mood calm.
+// Best for: About, story, team. Any vertical. Flip sides with `reverse`.
+import MaskReveal from '../../effects/MaskReveal.astro';
+import WeightShift from '../../effects/WeightShift.astro';
+interface Fact { value: string; label: string }
+interface Props { eyebrow?: string; headline?: string; paragraphs?: string[]; facts?: Fact[]; link?: { label: string; href: string }; media?: { src?: string; alt?: string; label?: string }; shape?: string; reverse?: boolean; id?: string }
+const { eyebrow = 'Who you are calling', headline = 'A small crew that answers its own phone', paragraphs = [
+  'We started with one truck and the idea that a homeowner should know exactly who is on their roof and why.',
+  'Today the same people quote the job, do the job and walk it with you at the end. Nothing is subcontracted out of sight.',
+], facts = [{ value: '[years]', label: 'years in the area' }, { value: '[count]', label: 'roofs completed' }, { value: '[rating]', label: 'Google rating' }], link = { label: 'Meet the crew', href: '/about' }, media = { label: 'Crew photo' }, shape = 'arch', reverse = false, id } = Astro.props;
+---
+<section class:list={['sec ground-card ground-mark', { reverse }]} id={id}>
+  <div class="wrap split">
+    <div class="photo"><MaskReveal src={media.src} alt={media.alt} label={media.label} shape={shape} /></div>
+    <div class="stack copy">
+      <span class="eyebrow">{eyebrow}</span>
+      <WeightShift text={headline} as="h2" class="h2" />
+      {paragraphs.map((p) => <p class="measure">{p}</p>)}
+      <dl class="facts">{facts.map((f) => <div><dd>{f.value}</dd><dt>{f.label}</dt></div>)}</dl>
+      <a class="tlink" href={link.href}>{link.label} <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+<style>
+  .reverse .photo { order: 2; }
+  .copy { padding-right: 48px; }
+  .photo :global(.frame) { max-width: 480px; margin: 0 auto; }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: var(--s-2) 0; width: 100%; }
+  .facts div { display: flex; flex-direction: column-reverse; gap: 6px; }
+  .facts dd { font-family: var(--f-display); font-weight: var(--w-display); font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem); line-height: 1; color: var(--brand); }
+  .facts dt { font-size: var(--fs-small); color: var(--muted); }
+  @media (max-width: 900px) { .reverse .photo { order: 0; } .facts div { align-items: center; } }
+</style>

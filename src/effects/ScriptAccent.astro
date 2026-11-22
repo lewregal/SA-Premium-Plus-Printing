@@ -1,0 +1,27 @@
+---
+// Handwritten script accent: a short script word or phrase beside a hero headline, with an optional little
+// drawn arrow. It rises and settles with a small rotation (transform and opacity only). Script is for accents
+// only, never headings or body, and it must still pass contrast as large text. Reduced motion or no JS: visible.
+interface Props { text: string; arrow?: 'down' | 'right' | 'none'; rotate?: number; class?: string; color?: string }
+const { text, arrow = 'down', rotate = -6, class: cls = '', color } = Astro.props;
+---
+<span class:list={['fx-script', cls]} data-fx="script" style={`--rot:${rotate}deg;${color ? `--c:${color}` : ''}`}>
+  <span class="fx-script-text">{text}</span>
+  {arrow !== 'none' && <svg class:list={['fx-script-arrow', arrow]} viewBox="0 0 60 40" aria-hidden="true"><path d="M4 6 C 20 30, 36 34, 54 22 M46 18 l9 4 -3 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>}
+</span>
+
+<script>
+  import { inview } from './inview';
+  inview('[data-fx="script"]', 0.5);
+</script>
+
+<style>
+  .fx-script { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; color: var(--c, var(--accent)); font-family: var(--f-script); font-style: var(--script-style); font-weight: var(--script-weight); font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem); line-height: 1; rotate: var(--rot); }
+  :global(.on-dark) .fx-script { color: var(--c, var(--star)); }
+  .fx-script-arrow { width: 44px; height: 30px; margin-left: 1.2em; }
+  .fx-script-arrow.right { rotate: -40deg; }
+  :global(html.motion) .fx-script .fx-script-text, :global(html.motion) .fx-script .fx-script-arrow { opacity: 0; transform: translateY(10px) rotate(-4deg); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  :global(html.motion) .fx-script .fx-script-arrow { transition-delay: 0.35s; }
+  :global(html.motion) .fx-script.is-in .fx-script-text, :global(html.motion) .fx-script.is-in .fx-script-arrow { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .fx-script .fx-script-text, .fx-script .fx-script-arrow { opacity: 1 !important; transform: none !important; } }
+</style>

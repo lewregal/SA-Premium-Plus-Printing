@@ -1,0 +1,159 @@
+---
+// Rigal signature mobile action bar (ported from the San Pedro North build, Oct 2026).
+// Phone app style Call and Directions tiles plus one primary pill. Shows at every width where the header nav
+// collapses (1100px and below). Without JavaScript the tiles are a plain tel: link and a Google Maps link.
+// With JavaScript: Call opens an iPhone style sheet with the live open or closed state; Directions on iPhone and
+// iPad offers Apple Maps or Google Maps. 75 percent scroll gate, inert while hidden, hidden while the menu is open.
+// Focus lesson (spnmhpa): never hand focus back to a tile after a tap; restore only when opened from the keyboard.
+import { SITE, directionsUrl } from '../data/site';
+import { bookingAction } from '../site.config';
+const loc = SITE.locations[0];
+const action = bookingAction(SITE.primaryAction);  // booking on: the pill goes to /book; off: the site's main action
+---
+<nav class="actbar" aria-label="Quick actions" data-actbar
+  data-tel={SITE.phoneE164} data-phone={SITE.phone} data-name={SITE.short}
+  data-hours={JSON.stringify(SITE.hours)} data-hours-text={SITE.hours.text}
+  data-place={`${loc.name}, ${loc.street}, ${loc.city}`} data-addr={`${loc.street}, ${loc.city}`}>
+  <a class="ab-act" href={`tel:${SITE.phoneE164}`} data-act-call aria-haspopup="dialog">
+    <span class="ab-ico ab-call"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg></span>
+    <span class="ab-lbl">Call<span class="sr-only"> {SITE.short}</span></span>
+  </a>
+  <a class="ab-act" href={directionsUrl()} target="_blank" rel="noopener" data-act-dir>
+    <span class="ab-ico ab-maps"><img src="/icons/google-maps.png" alt="" width="34" height="34" data-maps-img></span>
+    <span class="ab-lbl">Directions<span class="sr-only"> to {SITE.short}</span></span>
+  </a>
+  <a class="ab-pri" href={action.href}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <span>{action.label}</span>
+  </a>
+</nav>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-actbar]');
+  if (bar) {
+    const d = bar.dataset;
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const AM = '/icons/apple-maps.png', GM = '/icons/google-maps.png';
+    const gURL = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(d.place || '');
+    const aURL = 'https://maps.apple.com/?daddr=' + encodeURIComponent(d.addr || '') + '&q=' + encodeURIComponent(d.name || '');
+    if (isIOS) {
+      bar.classList.add('is-ios');
+      const img = bar.querySelector<HTMLImageElement>('[data-maps-img]');
+      if (img) { img.src = AM; img.width = 48; img.height = 48; }
+    }
+    document.documentElement.classList.add('ab-gate');
+    const gate = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const on = max < 40 || scrollY / max >= 0.75 || !sh.hidden;
+      if (on !== bar.classList.contains('show')) { bar.classList.toggle('show', on); bar.toggleAttribute('inert', !on); }
+    };
+    const esc = (t: string) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    function isOpen() {
+      try {
+        const h = JSON.parse(d.hours || '{}');
+        const parts = new Intl.DateTimeFormat('en-US', { timeZone: h.tz || 'America/Chicago', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+        const get = (k: string) => parts.find((p) => p.type === k)?.value || '';
+        const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
+        const now = Number(get('hour')) * 60 + Number(get('minute'));
+        const m = (s: string) => { const [a, b] = s.split(':').map(Number); return a * 60 + b; };
+        return (h.days || []).includes(day) && now >= m(h.open) && now < m(h.close);
+      } catch { return false; }
+    }
+    const sh = document.createElement('div');
+    sh.className = 'ab-sheet'; sh.hidden = true;
+    sh.innerHTML = '<div class="ms-backdrop" data-close></div><div class="ms-panel" role="dialog" aria-modal="true" aria-labelledby="ms-title"><div class="ms-group" data-ms-body></div><button type="button" class="ms-cancel" data-close>Cancel</button></div>';
+    document.body.appendChild(sh);
+    const body = sh.querySelector<HTMLElement>('[data-ms-body]')!;
+    let from: HTMLElement | null = null;
+    let byKey = false;
+    function open(html: string) {
+      body.innerHTML = html; sh.hidden = false;
+      requestAnimationFrame(() => sh.classList.add('open'));
+      sh.querySelector<HTMLElement>('.ms-opt')?.focus({ preventScroll: true });
+    }
+    function close() { sh.classList.remove('open'); setTimeout(() => { sh.hidden = true; gate(); }, 250); if (byKey) from?.focus({ preventScroll: true }); else from?.blur(); }
+    const call = bar.querySelector<HTMLElement>('[data-act-call]');
+    const dir = bar.querySelector<HTMLElement>('[data-act-dir]');
+    call?.addEventListener('click', (e) => {
+      e.preventDefault(); from = call; byKey = (e as MouseEvent).detail === 0;
+      const on = isOpen();
+      open('<div class="ms-title" id="ms-title">Call ' + esc(d.name || '') + '<small><span class="ms-dot ' + (on ? 'is-open' : 'is-closed') + '"></span>' + (on ? 'Open now' : 'Closed now. ' + esc(d.hoursText || '')) + '</small></div>' +
+        '<a class="ms-opt" href="tel:' + esc(d.tel || '') + '">Call ' + esc(d.phone || '') + '</a>');
+    });
+    dir?.addEventListener('click', (e) => {
+      if (!isIOS) return;
+      e.preventDefault(); from = dir; byKey = (e as MouseEvent).detail === 0;
+      open('<div class="ms-title" id="ms-title">Directions to ' + esc(d.name || '') + '<small>' + esc(d.addr || '') + '</small></div>' +
+        '<a class="ms-opt" href="' + aURL + '" target="_blank" rel="noopener"><img src="' + AM + '" alt="" width="30" height="30">Apple Maps</a>' +
+        '<a class="ms-opt" href="' + gURL + '" target="_blank" rel="noopener"><img src="' + GM + '" alt="" width="30" height="30">Google Maps</a>');
+    });
+    sh.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('[data-close]')) { close(); return; }
+      if (t.closest('.ms-opt')) setTimeout(close, 300);
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sh.hidden) close(); });
+    gate();
+    addEventListener('scroll', gate, { passive: true });
+    addEventListener('resize', gate);
+    addEventListener('load', gate);
+  }
+</script>
+
+<style>
+  .actbar { display: none; }
+  @media print { .actbar { display: none !important; } }
+  @media (max-width: 1100px) {
+    :global(body) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+    .actbar {
+      display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 12px;
+      position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; min-height: 82px;
+      padding: 8px 14px calc(8px + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, var(--deep) 97%, transparent); border-top: 1px solid rgb(255 255 255 / 0.1);
+      box-shadow: 0 -10px 28px -14px rgb(0 0 0 / 0.6);
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0s;
+    }
+    .ab-act { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 5px; min-width: 62px; padding: 2px 2px 0; color: #fff; text-decoration: none; font-weight: 700; font-size: 12px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .ab-act:hover { color: #fff; }
+    .ab-act:focus { outline: none; }
+    .ab-act:focus-visible .ab-ico { outline: 2px solid #fff; outline-offset: 2px; }
+    .ab-ico { width: 48px; height: 48px; border-radius: 11px; display: grid; place-items: center; overflow: hidden; box-shadow: 0 1px 0 rgb(255 255 255 / 0.18) inset, 0 3px 8px rgb(0 0 0 / 0.4); transition: transform 0.12s ease; }
+    .ab-act:active .ab-ico { transform: scale(0.9); }
+    .ab-call { background: linear-gradient(180deg, #25a244 0%, #1a7f37 100%); }
+    .ab-maps { background: #fff; }
+    .ab-maps img { width: 34px; height: 34px; }
+    .actbar.is-ios .ab-maps img { width: 100%; height: 100%; }
+    .ab-pri { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 18px; border-radius: var(--r-pill); background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 15px; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ab-pri:hover { color: var(--accent-ink); }
+    :global(html.ab-gate) .actbar:not(.show) { transform: translateY(110%); visibility: hidden; transition: transform 0.3s ease, visibility 0s 0.3s; }
+    :global(html.menu-open) .actbar { visibility: hidden; }
+  }
+  @media (min-width: 601px) and (max-width: 1100px) { .actbar { grid-template-columns: auto auto minmax(0, 300px); justify-content: center; gap: 14px; } }
+  @media (max-width: 360px) {
+    .actbar { gap: 8px; padding-left: 10px; padding-right: 10px; }
+    .ab-ico { width: 44px; height: 44px; border-radius: 10px; }
+    .ab-act { min-width: 54px; }
+    .ab-pri { padding-inline: 12px; font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { :global(html.ab-gate) .actbar { transition: none; } }
+
+  :global(.ab-sheet) { position: fixed; inset: 0; z-index: 95; }
+  :global(.ab-sheet[hidden]) { display: none; }
+  :global(.ab-sheet .ms-backdrop) { position: absolute; inset: 0; background: rgb(0 0 0 / 0.45); opacity: 0; transition: opacity 0.25s ease; }
+  :global(.ab-sheet .ms-panel) { position: absolute; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); max-width: 480px; margin: 0 auto; transform: translateY(115%); transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; }
+  :global(.ab-sheet.open .ms-backdrop) { opacity: 1; }
+  :global(.ab-sheet.open .ms-panel) { transform: none; }
+  :global(.ab-sheet .ms-group) { background: rgb(249 249 251 / 0.97); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-radius: 14px; overflow: hidden; }
+  :global(.ab-sheet .ms-title) { padding: 14px 16px 12px; text-align: center; font-size: 13px; font-weight: 600; color: #5c5c61; line-height: 1.35; }
+  :global(.ab-sheet .ms-title small) { display: flex; justify-content: center; align-items: center; gap: 6px; font-weight: 400; margin-top: 3px; font-size: 13px; }
+  :global(.ab-sheet .ms-dot) { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  :global(.ab-sheet .ms-dot.is-open) { background: #1f7a45; }
+  :global(.ab-sheet .ms-dot.is-closed) { background: #b3261e; }
+  :global(.ab-sheet .ms-opt) { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 58px; padding: 8px 16px; border-top: 0.5px solid rgb(60 60 67 / 0.3); color: #0066cc; font-size: 19px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  :global(.ab-sheet .ms-opt img) { width: 30px; height: 30px; border-radius: 7px; }
+  :global(.ab-sheet .ms-opt:active) { background: rgb(0 0 0 / 0.06); }
+  :global(.ab-sheet .ms-cancel) { display: block; width: 100%; margin-top: 8px; min-height: 58px; border: 0; border-radius: 14px; background: #fff; color: #0066cc; font: 600 19px/1 inherit; font-family: inherit; cursor: pointer; }
+  :global(.ab-sheet .ms-opt:focus-visible), :global(.ab-sheet .ms-cancel:focus-visible) { outline: 3px solid #0066cc; outline-offset: -3px; }
+  @media (prefers-reduced-motion: reduce) { :global(.ab-sheet .ms-panel), :global(.ab-sheet .ms-backdrop) { transition: none; } }
+</style>

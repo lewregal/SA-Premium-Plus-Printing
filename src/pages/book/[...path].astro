@@ -1,0 +1,64 @@
+---
+/*
+  Rigal Booking: a thin window onto Rigal's shared booking service (book.rigalmedia.com). Ported from the
+  Century Pest build. The page asks the service for the booking form (open times come from the client's
+  Google Calendar), shows it inside this site's own layout, and forwards the form back. No keys and no booking
+  logic live in this repo. Works with JavaScript off and for AI agents (/book/availability returns JSON).
+  Renders on request through the Vercel adapter (astro.config.mjs) while the rest of the site stays static.
+  With booking off in site.config.ts the route shows the "almost ready" fallback with the call button.
+*/
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+import { CONFIG } from '../../site.config';
+
+const SERVICE = `${CONFIG.booking.service}/${CONFIG.clientId}`;
+const PATHS = ['', 'confirmed', 'cancel', 'ics', 'availability'];
+const path = Astro.params.path ?? '';
+if (!PATHS.includes(path)) return Astro.redirect('/book');
+
+let html = '';
+let title = path === 'confirmed' ? 'Booked' : path === 'cancel' ? 'Cancel a booking' : 'Book online';
+if (CONFIG.booking.enabled) {
+  const url = new URL(path ? `${SERVICE}/${path}` : SERVICE);
+  Astro.url.searchParams.forEach((v, k) => url.searchParams.set(k, v));
+  const json = path === 'availability' || (Astro.request.headers.get('content-type') ?? '').includes('application/json');
+  if (path !== 'ics' && !json) url.searchParams.set('fragment', '1');
+  const headers: Record<string, string> = { 'x-booking-client-ip': Astro.clientAddress ?? '' };
+  let body: string | undefined;
+  if (Astro.request.method === 'POST') {
+    headers['content-type'] = Astro.request.headers.get('content-type') ?? 'application/x-www-form-urlencoded';
+    body = await Astro.request.text();
+  }
+  let res: Response;
+  try {
+    res = await fetch(url, { method: Astro.request.method, headers, body, redirect: 'manual', signal: AbortSignal.timeout(20000) });
+  } catch {
+    res = new Response(null, { status: 503 });
+  }
+  const location = res.headers.get('location')?.replace(SERVICE, '/book');
+  if (res.status >= 300 && res.status < 400 && location) return Astro.redirect(location, 303);
+  if (path === 'ics') return new Response(res.body, { status: res.status, headers: { 'content-type': 'text/calendar; charset=utf-8', 'content-disposition': 'attachment; filename="booking.ics"' } });
+  if (json) return new Response(res.body, { status: res.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+  html = res.ok || res.status === 400 || res.status === 409 ? await res.text() : '';
+  Astro.response.status = res.status === 200 ? 200 : res.status;
+} else if (path === 'availability') {
+  return new Response(JSON.stringify({ slots: [] }), { status: 200, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+}
+Astro.response.headers.set('cache-control', 'no-store');
+---
+<Base title={`${title} | ${SITE.short}`} description={`Book a visit with ${SITE.short} online.`} path="/book" noindex={!CONFIG.booking.enabled}>
+  <section class="sec ground-paper booking">
+    {html ? <div class="wrap" style="max-width: 760px"><Fragment set:html={html} /></div> : (
+      <div class="wrap stack" style="max-width: 760px; align-items: center; text-align: center">
+        <span class="eyebrow pill">Online booking</span>
+        <h1 class="h1">Online booking is almost ready</h1>
+        <p class="lede">Until then, call and we will set up a time.</p>
+        <div class="btnrow" style="justify-content: center"><a class="btn btn-primary" href={`tel:${SITE.phoneE164}`}>Call {SITE.phone}</a></div>
+      </div>
+    )}
+  </section>
+</Base>
+<style>
+  .booking { padding-top: calc(var(--sec-y) + 48px); }
+</style>

@@ -1,0 +1,135 @@
+---
+// Launch splash (harvested from San Pedro North, Nov 2026). A full screen page for launch day: Lou opens
+// https://{domain}/launch on a laptop at the client's office, the client presses "Launch site", confetti bursts in
+// the client's colors and the page reads "Congratulations, you are now live" for 3 seconds, then forwards to the
+// home page. Every load (and the Back button) starts at a fresh splash, so it can be rehearsed. Built for desktop
+// and laptop; it holds up on a phone but is not tuned for one. Everything brand comes from tokens.css and site.ts: the logo (SITE.logo, or the wordmark when
+// empty), the ground (--deep into --brand), the button and underline (--accent) and the confetti (the color roles).
+// Not linked anywhere, noindex, left out of the sitemap. Delete this file once the client has pressed the button.
+import Base from '../layouts/Base.astro';
+import KeywordHeadline from '../effects/KeywordHeadline.astro';
+import { SITE } from '../data/site';
+const host = new URL(SITE.domain).host;
+---
+<Base title={`Launch | ${SITE.short}`} description={`Launch the new ${SITE.name} website.`} path="/launch" noindex bare>
+  <div class="lx on-dark" data-lx>
+    <canvas class="lx-confetti" data-confetti aria-hidden="true"></canvas>
+
+    <div class="lx-card">
+      {SITE.logo
+        ? <img class="lx-logo" src={SITE.logo} width="200" height="200" alt={`${SITE.name} logo`}>
+        : <span class="lx-wordmark" aria-hidden="true">{SITE.short}</span>}
+      <h1 class="eyebrow pill lx-kicker">{SITE.category} · {SITE.city}, {SITE.region}</h1>
+
+      <section class="lx-view" data-view="ready">
+        <KeywordHeadline text="Ready to launch" keyword="launch" variant="underline" class="h1 lx-title" />
+        <p class="lx-lead">The new home of {SITE.short} on the web: {host}</p>
+        <button class="btn btn-primary lx-go" type="button" data-launch>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c1.5-1.5 3-1.5 4.5 0M4.5 13.5 9 15l6-6c2-2 4.5-3 5.5-3-.1 1-1 3.5-3 5.5l-6 6 1.5 4.5-2.5-1-3.5-3.5-1-2.5Z"/></svg>
+          Launch site
+        </button>
+      </section>
+
+      <section class="lx-view" data-view="live" hidden>
+        <div data-live-title tabindex="-1">
+          <KeywordHeadline text="Congratulations, you are now live" keyword="live" variant="underline" class="h1 lx-title lx-title-live" />
+        </div>
+        <p class="lx-url">{host}</p>
+        <div class="lx-actions">
+          <a class="btn btn-primary" href="/">Visit the site</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-lx]');
+    var ready = root.querySelector('[data-view="ready"]');
+    var live = root.querySelector('[data-view="live"]');
+    var canvas = root.querySelector('[data-confetti]');
+    var ctx = canvas.getContext('2d');
+    // confetti in the client's palette, read from the color roles in tokens.css
+    var css = getComputedStyle(document.documentElement);
+    var colors = ['--accent', '--accent', '--accent-soft', '--star', '--card', '--on-deep', '--paper']
+      .map(function (v) { return css.getPropertyValue(v).trim(); }).filter(Boolean);
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var parts = [], raf = 0, dpr = 1, go = 0;
+
+    function size() { dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr; }
+    size(); addEventListener('resize', size);
+
+    function burst(x, y, n, spread, angle, power) {
+      for (var i = 0; i < n; i++) {
+        var a = angle + (Math.random() - 0.5) * spread, v = power * (0.55 + Math.random() * 0.6);
+        parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
+          r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.35, tilt: Math.random() * Math.PI, vt: 0.05 + Math.random() * 0.12,
+          c: colors[(Math.random() * colors.length) | 0], round: Math.random() < 0.25 });
+      }
+    }
+    function frame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.vx *= 0.985; p.vy = p.vy * 0.985 + 0.32; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.tilt += p.vt;
+        if (p.y > innerHeight + 40) { parts.splice(i, 1); continue; }
+        ctx.save(); ctx.translate(p.x * dpr, p.y * dpr); ctx.rotate(p.r); ctx.scale(1, Math.cos(p.tilt)); ctx.fillStyle = p.c;
+        if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w * 0.5 * dpr, 0, Math.PI * 2); ctx.fill(); }
+        else ctx.fillRect(-p.w / 2 * dpr, -p.h / 2 * dpr, p.w * dpr, p.h * dpr);
+        ctx.restore();
+      }
+      raf = parts.length ? requestAnimationFrame(frame) : 0;
+    }
+    function start() { if (!raf) raf = requestAnimationFrame(frame); }
+    function celebrate() {
+      var w = innerWidth, h = innerHeight, k = Math.min(1, w / 900);
+      burst(0, h * 0.9, 120 * k + 40, 0.9, -Math.PI / 3, 26);
+      burst(w, h * 0.9, 120 * k + 40, 0.9, -Math.PI * 2 / 3, 26);
+      setTimeout(function () { burst(w / 2, h * 0.55, 160 * k + 50, Math.PI * 2, -Math.PI / 2, 18); start(); }, 350);
+      setTimeout(function () { for (var i = 0; i < 90 * k + 30; i++) burst(Math.random() * w, -20, 1, 0.6, Math.PI / 2, 4); start(); }, 900);
+      start();
+    }
+    function show(view) {
+      ready.hidden = view !== 'ready'; live.hidden = view !== 'live';
+      root.classList.toggle('is-live', view === 'live');
+      // restart the headline's underline draw each time a view appears
+      var head = (view === 'live' ? live : ready).querySelector('.fx-kwh');
+      if (head) head.replaceWith(head.cloneNode(true));
+    }
+    root.querySelector('[data-launch]').addEventListener('click', function () {
+      show('live'); root.querySelector('[data-live-title]').focus({ preventScroll: true });
+      if (!still) celebrate();
+      clearTimeout(go); go = setTimeout(function () { location.assign('/'); }, 3000);
+    });
+    // coming back (Back button or a reload) always shows a fresh splash, so the launch can be rehearsed
+    addEventListener('pageshow', function () {
+      clearTimeout(go); parts = []; ctx.clearRect(0, 0, canvas.width, canvas.height); show('ready');
+    });
+  })();
+</script>
+
+<style>
+  .lx { position: relative; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 40px 24px; overflow: hidden;
+    background: radial-gradient(120% 80% at 50% 0%, var(--brand) 0%, var(--deep) 70%); }
+  .lx-confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+  .lx-card { position: relative; z-index: 1; width: 100%; min-width: 0; max-width: 1000px; display: flex; flex-direction: column; align-items: center; gap: 22px; text-align: center; }
+  .lx-logo { width: clamp(132px, 16vw, 200px); height: auto; object-fit: contain; filter: drop-shadow(0 18px 40px rgb(0 0 0 / 0.35)); }
+  .lx-wordmark { font-family: var(--f-display); font-weight: var(--w-display); text-transform: var(--tt-display); font-size: clamp(28px, 3.4vw, 44px); color: var(--on-deep-strong); letter-spacing: var(--ls-display); }
+  .lx-kicker { align-self: center; background: rgb(255 255 255 / 0.08); border-color: rgb(255 255 255 / 0.24); color: var(--on-deep-strong); }
+  .lx-view { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; min-width: 0; }
+  .lx-view[hidden] { display: none; }
+  [data-live-title] { outline: none; }
+  .lx-title { font-size: clamp(56px, 9vw, 136px); margin: 0; }
+  .lx-title-live { font-size: clamp(40px, 7.4vw, 120px); }
+  .lx-lead { font-size: var(--fs-lede); color: var(--on-deep); max-width: 44ch; margin: 0; }
+  .lx-go { margin-top: 10px; min-height: 64px; padding: 0 36px; font-size: 18px; }
+  .lx-url { font-family: var(--f-mono); font-size: 15px; letter-spacing: 0.04em; color: var(--star); margin: 0; }
+  .lx-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .lx-go { animation: lx-pulse 2.4s ease-in-out infinite; }
+    .is-live .lx-logo, .is-live .lx-wordmark { animation: lx-pop 0.6s cubic-bezier(.2, 1.4, .4, 1) both; }
+  }
+  @keyframes lx-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 50% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--accent) 0%, transparent); } }
+  @keyframes lx-pop { from { transform: scale(0.85); } to { transform: scale(1); } }
+</style>

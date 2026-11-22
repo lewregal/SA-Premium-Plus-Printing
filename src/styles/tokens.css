@@ -1,0 +1,158 @@
+/* Rigal Astro starter: brand tokens.
+   Every visible brand decision lives here, by role. A new client build is mostly this file plus copy.
+   The sample values below are a neutral roofing and contractor palette (slate, brand red, warm paper).
+   Rules: every color pair used for text must pass WCAG 2.2 AA (4.5:1 body, 3:1 large text and UI).
+   rigal-site-audit measures the real pixels, so prove it there after every swap. */
+
+:root {
+  /* ---------- COLOR ROLES ----------
+     Swap the hex values, keep the roles. Each comment says what changes on the page. */
+  --deep: #141a21;        /* darkest ground: footer, hero scrim, mobile action bar, the Wash CTA. Never pure black; tint it with the brand. */
+  --brand: #1f3a4d;       /* brand color: headings on light grounds, dark washes, the Banner overlay. Must carry white text at 4.5:1. */
+  --accent: #c8502d;      /* the one action color: primary buttons, the highlighter bar, the drawn underline. Appears nowhere as decoration. */
+  --accent-ink: #ffffff;  /* text on the accent fill. Check 4.5:1 against --accent. */
+  --accent-soft: #f2d9cf; /* highlighter bar and soft chips on light grounds (not for text). */
+  --ink: #1d232a;         /* body text on light grounds. */
+  --muted: #566069;       /* small text, captions, eyebrow text on light grounds. At least 4.5:1 on --paper and --card. */
+  --line: rgb(29 35 42 / 0.14);  /* hairlines, card borders, dividers. */
+  --paper: #f4f1ec;       /* light ground A (page background). */
+  --card: #ffffff;        /* light ground B and card surfaces. Alternate with --paper so no two neighbors share a ground. */
+  --on-deep: #e6e2db;     /* body text on --deep and --brand grounds. */
+  --on-deep-strong: #ffffff; /* headings on dark grounds. */
+  --star: #e0a43b;        /* review stars. Decorative; never the only signal. */
+
+  /* ---------- TYPE ----------
+     Faces load through Astro's built in fonts feature (the `fonts` list in astro.config.mjs, built from the type
+     preset named in src/site.config.ts and defined in src/data/type-presets.ts; rendered by the <Font /> components
+     in Base.astro). Astro writes one variable per role (--font-display, --font-body, --font-accent) that already
+     carries the metric matched fallbacks, so these role tokens only point at them. To change the type: set `type`
+     in site.config.ts (plex, druk, screamer, or a new matched pairing added to type-presets.ts). Base.astro puts
+     the preset id on <html data-type>, and the per preset blocks at the end of this file retune the scale. */
+  --f-display: var(--font-display, 'Helvetica Neue', Arial, sans-serif);
+  --f-body: var(--font-body, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  --f-accent: var(--font-accent, system-ui, sans-serif);  /* the preset's third face: mono (numbers, labels) or script (notes) */
+  --f-mono: var(--f-accent);        /* numbers, prices, hours, labels. Presets with a script accent fall back to the body face below. */
+  --f-script: var(--f-accent);      /* handwritten accents only, never body or headings. Presets with a mono accent use the display face in italic. */
+  --script-style: normal;           /* italic when the script role falls back to the display face */
+  --script-weight: 500;
+
+  /* Weights: a variable font covers the range; these are the stops the sections use. */
+  --w-display: 760;       /* H1, H2 */
+  --w-display-light: 420; /* the lighter line in an outlined or mixed weight headline */
+  --w-heading: 640;       /* H3, card titles */
+  --w-body: 430;
+  --w-strong: 640;
+
+  /* Fluid type scale: clamp(min at 390, preferred, max at 1440). See rigal-web-design references/typography.md. */
+  --fs-h1: clamp(2.5rem, 1.2rem + 5.3vw, 5.5rem);      /* 40px to 88px */
+  --fs-h2: clamp(2rem, 1.1rem + 3.4vw, 3.75rem);       /* 32px to 60px */
+  --fs-h3: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);  /* 22px to 28px */
+  --fs-xl: clamp(3rem, 1.5rem + 7.5vw, 7.5rem);        /* 48px to 120px, kinetic and expressive heroes only */
+  --fs-lede: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); /* 17px to 20px */
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);  /* 16px to 17px */
+  --fs-small: 0.875rem;                                 /* 14px, captions and meta */
+  --fs-eyebrow: 0.75rem;                                /* 12px, uppercase, tracked */
+  --lh-display: 0.96;
+  --lh-heading: 1.12;
+  --lh-body: 1.6;
+  --ls-display: -0.02em;
+  --ls-eyebrow: 0.18em;
+  --tt-display: none;     /* uppercase for the condensed presets */
+  --measure: 64ch;        /* body copy max width (60 to 70ch) */
+
+  /* ---------- SHAPE ----------
+     Clickable things and containers get different shapes so the shape says what is clickable.
+     Trades and auto: hard corners. Care, spa, food: soft. */
+  --r-btn: 6px;           /* buttons */
+  --r-card: 16px;         /* cards and panels */
+  --r-media: 20px;        /* photo frames */
+  --r-pill: 999px;        /* eyebrows, chips, nav pills */
+  --shadow-1: 0 24px 48px -28px rgb(20 26 33 / 0.45);  /* the one shadow budgeted per page */
+
+  /* ---------- SPACING ----------
+     8px scale. Sections breathe: desktop 96 to 128, phone 64 to 80. */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --s-10: 8rem;
+  --sec-y: clamp(4rem, 2.5rem + 6vw, 7.5rem);   /* section padding: 64px to 120px */
+  --sec-y-tight: clamp(3rem, 2rem + 4vw, 5.5rem); /* 48px to 88px */
+  --container: 1200px;
+  --gutter: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+
+  /* ---------- TEXTURE ----------
+     Section grounds come from these. Swap for the client's trade (shingle lines, tread, linen, kraft).
+     Files live in public/textures/. Keep line patterns at 4 to 5% ink; the audit checks the calm law. */
+  --tx-pattern: url('/textures/pattern-lines.svg');     /* Paper sections: faint line motif */
+  --tx-pattern-size: 120px 104px;
+  --tx-wash: url('/textures/wash-grain.svg');           /* Wash and CTA sections: grain dissolved into --brand or --deep */
+  --tx-grain: url('/textures/grain.svg');               /* sitewide grain overlay on html::after */
+  --tx-grain-opacity: 0.035;                            /* never over 0.04 so contrast is untouched */
+  --tx-mark: url('/textures/mark.svg');                 /* ghost brand glyph for Mark sections (4 to 8% opacity) */
+  --tx-mark-opacity: 0.06;
+
+  /* ---------- MOTION ----------
+     One ease, two speeds. Effects in src/effects/ read these. */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-fast: 0.25s;
+  --t-slow: 0.45s;
+  --t-reveal: 0.9s;
+
+  /* ---------- ACCENT EFFECT CHOICE ----------
+     Which keyword moment the hero gets (the only motion allowed in a hero; CSS only, src/effects/Keyword.astro).
+     Read by the kit page labels and the harvest notes; the hero takes a `keywordVariant` prop. Values:
+     keyword-highlighter | keyword-underline | keyword-fill. Effects below the hero are picked per section:
+     split-line-reveal | word-stagger | mask-reveal | scribble-underline | highlighter-bar | outlined-to-solid |
+     scramble-text | weight-shift | marquee | counter-roll | script-accent | gradient-sweep */
+  --fx-hero: 'keyword-highlighter';
+}
+
+/* ---------- TYPE PRESET OVERRIDES ----------
+   Base.astro sets <html data-type="{CONFIG.type}">. Each block retunes the scale for its faces; the roles above
+   stay the same. A new matched pairing gets its own block here when its faces run small, large or need capitals. */
+
+/* plex (#4): IBM Plex Sans for words and numbers; Caveat for notes, like the other presets (Lou, 2026-11-08). */
+:root[data-type="plex"] {
+  --f-mono: var(--f-body);
+  --w-display: 600;
+  --w-display-light: 400;
+  --w-heading: 600;
+  --w-body: 400;
+  --w-strong: 600;
+  --ls-display: -0.035em;
+  --lh-display: 0.98;
+}
+
+/* druk (#6): Big Shoulders capitals over Host Grotesk; Caveat for notes, numbers in the body face. */
+:root[data-type="druk"] {
+  --f-mono: var(--f-body);
+  --w-display: 800;
+  --w-display-light: 500;
+  --w-heading: 600;
+  --tt-display: uppercase;
+  --ls-display: 0;
+  --lh-display: 0.9;
+  --fs-h1: clamp(3rem, 1.3rem + 6.4vw, 6.5rem);        /* 48px to 104px: the condensed face needs the room */
+  --fs-h2: clamp(2.375rem, 1.3rem + 4vw, 4.5rem);      /* 38px to 72px */
+  --fs-xl: clamp(3.5rem, 1.6rem + 8.8vw, 8.75rem);     /* 56px to 140px */
+}
+
+/* screamer (#12): Sofia Sans Extra Condensed capitals over Sofia Sans; Caveat for notes, numbers in the body face. */
+:root[data-type="screamer"] {
+  --f-mono: var(--f-body);
+  --w-display: 800;
+  --w-display-light: 500;
+  --w-heading: 600;
+  --tt-display: uppercase;
+  --ls-display: 0.005em;
+  --lh-display: 0.9;
+  --fs-h1: clamp(3.125rem, 1.3rem + 6.8vw, 6.75rem);   /* 50px to 108px */
+  --fs-h2: clamp(2.5rem, 1.3rem + 4.2vw, 4.75rem);     /* 40px to 76px */
+  --fs-xl: clamp(3.75rem, 1.6rem + 9.2vw, 9rem);       /* 60px to 144px */
+}

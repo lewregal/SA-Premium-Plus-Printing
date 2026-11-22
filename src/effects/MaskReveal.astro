@@ -1,0 +1,27 @@
+---
+// Mask reveal: a photo enters through its frame. The frame is an overflow hidden wrapper; the image slides up
+// from below it while settling from scale 1.12 to 1. Transform and opacity only. The frame shape comes from the
+// `shape` class in global.css (arch, pitch, chamfer, wide, square) so the outline never changes mid reveal.
+// Reduced motion or no JS: the photo simply shows.
+interface Props { src?: string; alt?: string; shape?: string; class?: string; delay?: number; label?: string }
+const { src, alt = '', shape = '', class: cls = '', delay = 0, label } = Astro.props;
+---
+<div class:list={['frame fx-mask', shape, cls]} data-fx="mask-reveal" style={`--delay:${delay}s`}>
+  <div class="fx-mask-in">
+    {src ? <img src={src} alt={alt} width="1200" height="1500" loading="lazy" decoding="async" /> : <div class="ph">{label || 'Client photo'}</div>}
+  </div>
+</div>
+
+<script>
+  import { inview } from './inview';
+  inview('[data-fx="mask-reveal"]', 0.25);
+</script>
+
+<style>
+  .fx-mask-in { position: absolute; inset: 0; }
+  .fx-mask-in :global(img), .fx-mask-in .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  :global(html.motion) .fx-mask .fx-mask-in { transform: translateY(100%); transition: transform 1.1s var(--ease); transition-delay: var(--delay); }
+  :global(html.motion) .fx-mask .fx-mask-in :global(img) { transform: scale(1.12); transition: transform 1.6s var(--ease); transition-delay: var(--delay); }
+  :global(html.motion) .fx-mask.is-in .fx-mask-in, :global(html.motion) .fx-mask.is-in .fx-mask-in :global(img) { transform: none; }
+  @media (prefers-reduced-motion: reduce) { .fx-mask .fx-mask-in, .fx-mask .fx-mask-in :global(img) { transform: none !important; } }
+</style>

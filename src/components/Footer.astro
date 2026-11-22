@@ -1,0 +1,89 @@
+---
+// Footer with the full treatment (rigal-design-rules, 2026-11-07): centered on phones, columns on desktop,
+// every group title is a text only pill (no dot, Lou 2026-11-07), one map thumbnail card per location (self hosted image, brand pin, links to Google Maps).
+// Replace /placeholders/map.svg with one small WebP per location and credit the map data.
+import { SITE, directionsUrl } from '../data/site';
+import { CONFIG } from '../site.config';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer on-dark">
+  <div class="wrap foot-top">
+    <div class="foot-brand">
+      <span class="brand-name">{SITE.short}</span>
+      <p class="measure">{SITE.category} serving {SITE.city} and nearby towns. Built to WCAG accessibility standards.</p>
+      <ul class="foot-trust" aria-label="Trust">
+        <li>Licensed and insured</li>
+        <li>Free estimates</li>
+        <li>Local crew</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <span class="foot-pill">Pages</span>
+      {SITE.nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      {CONFIG.booking.enabled && <a href="/book">{CONFIG.booking.label}</a>}
+    </div>
+    <div class="foot-col">
+      <span class="foot-pill">Service areas</span>
+      {SITE.areas.map((a) => <a href={`/service-areas/${a.toLowerCase().replace(/\s+/g, '-')}`}>{a}</a>)}
+    </div>
+    <div class="foot-col">
+      <span class="foot-pill">Reach us</span>
+      <a href={`tel:${SITE.phoneE164}`}>{SITE.phone}</a>
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <span class="foot-hours">{SITE.hours.text}</span>
+    </div>
+  </div>
+  <div class="wrap foot-maps">
+    {SITE.locations.map((loc) => (
+      <a class="map-card" href={directionsUrl(loc)} target="_blank" rel="noopener">
+        <span class="map-thumb"><img src={loc.map} alt={`Map showing ${loc.name}`} width="400" height="300" loading="lazy" decoding="async"></span>
+        <span class="map-body">
+          <strong>{loc.name}</strong>
+          <span>{loc.street}<br>{loc.city}</span>
+          <span>{loc.phone}</span>
+          <span class="map-go">Open in Google Maps</span>
+        </span>
+      </a>
+    ))}
+  </div>
+  <div class="wrap foot-base">
+    <span>&copy; {year} {SITE.name}. Map data &copy; OpenStreetMap contributors.</span>
+    <a class="credit" href="https://rigalmedia.com" rel="noopener">Website by Rigal Media</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--deep); padding: var(--s-9) 0 var(--s-6); }
+  .foot-top { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: var(--s-7) var(--s-6); align-items: start; }
+  .foot-brand { display: flex; flex-direction: column; gap: var(--s-4); }
+  .brand-name { font-family: var(--f-display); font-weight: var(--w-display); font-size: 26px; color: #fff; }
+  .foot-trust { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; }
+  .foot-trust li::before { content: "\2713"; margin-right: 6px; color: var(--star); }
+  .foot-col { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; font-size: 15px; }
+  .foot-col a { color: var(--on-deep); text-decoration: none; padding: 2px 0; }
+  @media (max-width: 1100px) { .foot-col a { min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; } .foot-col { gap: 0; } .credit { min-height: 44px; display: inline-flex; align-items: center; margin: 0; } }
+  .foot-col a:hover { color: #fff; text-decoration: underline; }
+  .foot-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; margin-bottom: 6px; border-radius: var(--r-pill); border: 1px solid rgb(255 255 255 / 0.2); background: rgb(255 255 255 / 0.06); color: var(--on-deep); font-size: 11.5px; font-weight: var(--w-strong); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1; }
+  .foot-hours { font-size: 14px; opacity: 0.85; }
+  .foot-maps { display: flex; flex-wrap: wrap; gap: var(--s-5); margin-top: var(--s-8); }
+  .map-card { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: var(--s-4); align-items: center; width: min(100%, 440px); padding: 12px; border-radius: var(--r-card); border: 1px solid rgb(255 255 255 / 0.14); background: rgb(255 255 255 / 0.05); color: var(--on-deep); text-decoration: none; transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease); }
+  .map-card:hover { transform: translateY(-3px); border-color: rgb(255 255 255 / 0.3); color: var(--on-deep); }
+  .map-thumb { display: block; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; }
+  .map-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .map-body { display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 1.4; }
+  .map-body strong { color: #fff; font-size: 15px; }
+  .map-go { margin-top: 6px; color: #fff; font-weight: var(--w-strong); text-decoration: underline; text-underline-offset: 3px; }
+  .foot-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: var(--s-8); padding-top: var(--s-5); border-top: 1px solid rgb(255 255 255 / 0.14); font-size: 13px; }
+  .credit { color: var(--on-deep); display: inline-block; padding: 8px 0; margin: -8px 0; }
+  @media (max-width: 1100px) { .foot-top { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
+  @media (max-width: 900px) {
+    .site-footer { text-align: center; }
+    .foot-top { grid-template-columns: 1fr; justify-items: center; }
+    .foot-brand, .foot-col { align-items: center; }
+    .foot-brand p { margin: 0 auto; }
+    .foot-trust { justify-content: center; }
+    .foot-maps { justify-content: center; }
+    .map-card { grid-template-columns: 1fr; text-align: center; }
+    .foot-base { flex-direction: column; align-items: center; }
+  }
+</style>

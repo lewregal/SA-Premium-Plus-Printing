@@ -1,0 +1,41 @@
+---
+// Hero / FullBleed. Footage or a photo fills the viewport; a side gradient in the brand's darkest tone calms the
+// text side; copy sits left on a max 560px column. Phones: an even scrim top to bottom and centered copy.
+// Fingerprint: layout full-bleed-left, headline bold-solid, density low, background photo-wash, effect keyword-underline, mood bold.
+// The headline renders complete at first paint; the one motion moment is the CSS only Keyword (underline drawing).
+// Best for: Story driven motion, Human made. Roofing and contractors (drone or job site), bars (room footage), auto (bay at night).
+import type { SectionProps } from '../types';
+import Proof from '../../components/Proof.astro';
+import Actions from '../../components/Actions.astro';
+import Media from '../../components/Media.astro';
+import KeywordHeadline from '../../effects/KeywordHeadline.astro';
+import { SITE } from '../../data/site';
+interface Props extends SectionProps { kicker?: boolean; keyword?: string; keywordVariant?: 'highlighter' | 'underline' | 'fill' }
+const { eyebrow = `${SITE.category} in ${SITE.city}, ${SITE.region}`, headline = 'Roofing built for the next storm, not just the last one', line = 'Inspections, repairs and full replacements with photos of every step, so you see what we see.', proof, primary, secondary = { label: 'Call ' + SITE.phone, href: `tel:${SITE.phoneE164}` }, media = { src: '/placeholders/scene-2.svg', alt: '' }, kicker = true, keyword, keywordVariant = 'underline', id } = Astro.props;
+---
+<section class="hero hero-bleed on-dark" id={id} style={media.pos ? `--focus-m:${media.pos}` : undefined}>
+  <Media media={media} class="hero-bg" eager />
+  <div class="wrap hero-inner">
+    <div class="stack hero-copy">
+      {kicker ? <h1 class="crumb">{eyebrow}</h1> : <span class="eyebrow">{eyebrow}</span>}
+      <KeywordHeadline text={headline} keyword={keyword} variant={keywordVariant} as={kicker ? 'p' : 'h1'} class="h1" />
+      <p class="lede">{line}</p>
+      <Proof text={proof} />
+      <Actions primary={primary} secondary={secondary} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--s-9) + 40px) 0 var(--s-8); background: var(--deep); }
+  .hero :global(.hero-bg) { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, color-mix(in srgb, var(--deep) 88%, transparent) 0%, color-mix(in srgb, var(--deep) 72%, transparent) 42%, color-mix(in srgb, var(--deep) 22%, transparent) 100%); }
+  .hero-inner { width: 100%; }
+  .hero-copy { max-width: 560px; gap: var(--s-5); }
+  @media (max-width: 900px) {
+    .hero { padding-top: calc(var(--s-8) + 48px); }
+    .hero::before { background: linear-gradient(180deg, color-mix(in srgb, var(--deep) 62%, transparent), color-mix(in srgb, var(--deep) 82%, transparent) 40%, color-mix(in srgb, var(--deep) 82%, transparent) 78%, color-mix(in srgb, var(--deep) 62%, transparent)); }
+    .hero :global(.hero-bg) { object-position: var(--focus-m, 70% 50%); }
+    .hero-copy { margin: 0 auto; }
+  }
+</style>

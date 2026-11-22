@@ -1,0 +1,23 @@
+---
+// Weight shift on scroll: a variable font headline moves from light to heavy as it travels up the viewport
+// (GSAP ScrollTrigger, scrubbed, loaded lazily below the hero). Says "this is set in a real variable face" without
+// a single image. The weight axis is the one property animated (an accepted paint only exception: it re-rasterizes
+// one headline). An invisible copy at the heavy weight sizes the box, so nothing around the headline moves while the
+// weight changes (no layout shift, and the audit's ground stays put). Reduced motion or no JS: the heavy weight.
+// Needs a face with a real weight axis (every house preset has one).
+interface Props { text: string; as?: 'h1' | 'h2' | 'p'; class?: string; from?: number; to?: number }
+const { text, as: Tag = 'h2', class: cls = 'h2', from = 300, to = 800 } = Astro.props;
+---
+<Tag class:list={['fx-weight', cls]} data-fx="weight-shift" data-gsap="weight-shift" data-from={from} data-to={to} style={`--w:${to};--to:${to}`}>
+  <span class="fx-weight-size" aria-hidden="true">{text}</span>
+  <span class="fx-weight-live">{text}</span>
+</Tag>
+
+<style>
+  .fx-weight { display: grid; justify-items: start; }
+  .fx-weight > span { grid-area: 1 / 1; }
+  @media (max-width: 900px) { .fx-weight { justify-items: center; } .fx-weight > span { text-align: center; } }
+  .fx-weight-size { visibility: hidden; font-weight: var(--to); font-variation-settings: 'wght' var(--to); }
+  .fx-weight-live { font-weight: var(--w); font-variation-settings: 'wght' var(--w); }
+  @media (prefers-reduced-motion: reduce) { .fx-weight-live { font-variation-settings: 'wght' var(--to) !important; font-weight: var(--to) !important; } }
+</style>

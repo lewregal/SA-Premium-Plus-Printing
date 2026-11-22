@@ -1,0 +1,20 @@
+---
+// Trust / TrustLine. A thin band of three to five trust items (licensed, years, warranty, reviews) with small icons,
+// on the brand wash. Sits right under the hero on trade sites. Fingerprint: layout row-strip, headline none, density low,
+// background brand-wash, effect none, mood steady. Best for: roofing and contractors, auto, pest and home services.
+interface Item { label: string }
+interface Props { items?: Item[]; id?: string }
+const { items = [{ label: 'Licensed and insured' }, { label: 'Written price before work starts' }, { label: 'Photos of every step' }, { label: 'Clean yard at the end' }], id } = Astro.props;
+---
+<section class="trustline ground-wash on-dark" id={id}>
+  <ul class="wrap trust-row" aria-label="Why people call us">
+    {items.map((it) => <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{it.label}</li>)}
+  </ul>
+</section>
+<style>
+  .trustline { position: relative; isolation: isolate; overflow: hidden; padding: 22px 0; }
+  .trust-row { list-style: none; margin: 0 auto; padding-top: 0; padding-bottom: 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 28px; font-size: 15px; font-weight: var(--w-strong); }
+  .trust-row li { display: inline-flex; align-items: center; gap: 10px; }
+  .trust-row svg { color: var(--star); flex: none; }
+  @media (max-width: 900px) { .trust-row { justify-content: center; } }
+</style>

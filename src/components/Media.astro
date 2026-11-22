@@ -1,0 +1,21 @@
+---
+// Hero and section media: the client's photo or footage, or a labelled placeholder until it exists.
+// Footage: muted, loop, autoplay, playsinline, with a poster; hidden under reduced motion in favor of the poster.
+import type { Media } from '../sections/types';
+interface Props { media?: Media; class?: string; eager?: boolean; cover?: boolean }
+const { media = {}, class: cls = '', eager = false, cover = true } = Astro.props;
+---
+{media.video ? (
+  <>
+    <video class:list={[cls, 'media-video']} src={media.video} poster={media.poster} muted loop autoplay playsinline aria-hidden="true" tabindex="-1"></video>
+    {media.poster && <img class:list={[cls, 'media-poster']} src={media.poster} alt="" aria-hidden="true" />}
+  </>
+) : media.src ? (
+  <img class={cls} src={media.src} alt={media.alt || ''} width="1200" height="1500" loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" style={media.pos ? `object-position:${media.pos}` : undefined} />
+) : (
+  <div class:list={['ph', cls]}>{media.label || 'Client photo'}</div>
+)}
+<style>
+  .media-poster { display: none; }
+  @media (prefers-reduced-motion: reduce) { .media-video { display: none; } .media-poster { display: block; } }
+</style>

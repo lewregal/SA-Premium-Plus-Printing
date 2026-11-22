@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import ServicesGrid from '../sections/services/ServicesGrid.astro';
+import Faq from '../sections/faq/Faq.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`Services | ${SITE.short}`} description={`Every ${SITE.category.toLowerCase()} service ${SITE.short} offers in ${SITE.city}.`} path="/services">
+  <Banner crumbs={[{ name: 'Services', href: '/services' }]} eyebrow={`${SITE.category} services in ${SITE.city}, ${SITE.region}`} headline="Every service, one crew" line="Pick the one you need and read what it includes before you call." />
+  <ServicesGrid />
+  <Faq />
+  <WashCta />
+</Base>

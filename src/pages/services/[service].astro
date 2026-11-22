@@ -1,0 +1,22 @@
+---
+// One page per GBP service. A client build fills SERVICES from the profile; the starter carries the sample list.
+import Base from '../../layouts/Base.astro';
+import Banner from '../../sections/banner/Banner.astro';
+import Narrative from '../../sections/mark/Narrative.astro';
+import ReviewGrid from '../../sections/reviews/ReviewGrid.astro';
+import Faq from '../../sections/faq/Faq.astro';
+import WashCta from '../../sections/cta/WashCta.astro';
+import { SITE } from '../../data/site';
+export function getStaticPaths() {
+  return ['roof-repair', 'roof-replacement', 'storm-inspection', 'gutters', 'metal-roofing', 'commercial-roofing'].map((service) => ({ params: { service } }));
+}
+const { service } = Astro.params;
+const name = service.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+---
+<Base title={`${name} in ${SITE.city}, ${SITE.region} | ${SITE.short}`} description={`${name} by ${SITE.short} in ${SITE.city}. Call ${SITE.phone}.`} path={`/services/${service}`}>
+  <Banner crumbs={[{ name: 'Services', href: '/services' }, { name, href: `/services/${service}` }]} eyebrow={`${name} in ${SITE.city}, ${SITE.region}`} headline={`${name}, explained before you book`} line="What the visit includes, how long it takes and what it costs, in plain words." />
+  <Narrative eyebrow="What to expect" headline={`How a ${name.toLowerCase()} visit goes`} link={{ label: 'See every service', href: '/services' }} />
+  <ReviewGrid />
+  <Faq />
+  <WashCta />
+</Base>

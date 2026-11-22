@@ -1,0 +1,205 @@
+---
+// Base layout: head, skip link, header with phone menu, main, footer (full treatment from rigal-design-rules),
+// and the signature mobile action bar (ported from the San Pedro North build). Business facts come from src/data/site.ts.
+import '../styles/global.css';
+import { SITE, directionsUrl } from '../data/site';
+import ActionBar from '../components/ActionBar.astro';
+import Footer from '../components/Footer.astro';
+import { Font } from 'astro:assets';
+import { CONFIG, bookingAction } from '../site.config';
+const action = bookingAction(SITE.primaryAction);
+
+interface Props {
+  title: string;          // 60 characters or less
+  description: string;
+  path?: string;          // '/' for home
+  noindex?: boolean;
+  ogImage?: string;       // under /images/og/
+  overlayHeader?: boolean; // header floats over a full bleed hero
+  multiH1?: boolean;       // kit page only: several heroes, several h1s, tells the audit
+  bare?: boolean;          // full screen pages with no chrome (the /launch splash): no header, menu, footer, action bar or Front Desk
+}
+const { title, description, path = '/', noindex = false, ogImage = '/images/og/default.jpg', overlayHeader = false, multiH1 = false, bare = false } = Astro.props;
+const url = new URL(path, SITE.domain).href.replace(/\/$/, '') || SITE.domain;
+const ogAbs = new URL(ogImage, SITE.domain).href;
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'LocalBusiness', '@id': `${SITE.domain}/#business`, name: SITE.name, telephone: SITE.phoneE164, url: SITE.domain,
+      address: { '@type': 'PostalAddress', streetAddress: SITE.address.street, addressLocality: SITE.address.city, addressRegion: SITE.address.region, postalCode: SITE.address.zip, addressCountry: 'US' } },
+    { '@type': 'WebPage', '@id': `${url}#webpage`, url, name: title, description, datePublished: SITE.published, dateModified: SITE.modified,
+      author: { '@id': `${SITE.domain}/#business` }, publisher: { '@id': `${SITE.domain}/#business` } },
+  ],
+};
+---
+<!doctype html>
+<html lang="en" data-type={CONFIG.type} data-audit-multi-h1={multiH1 ? "" : undefined}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  {noindex ? <meta name="robots" content="noindex"> : <link rel="canonical" href={url}>}
+  <meta name="theme-color" content="#141a21">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- House faces (astro.config.mjs HOUSE, from the type preset in site.config.ts). Display and body preload their
+       normal style; the accent face (mono or script) loads on demand. -->
+  <Font cssVariable="--font-display" preload={[{ style: 'normal' }]} />
+  <Font cssVariable="--font-body" preload={[{ style: 'normal' }]} />
+  <Font cssVariable="--font-accent" />
+  <slot name="head" />
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content={SITE.short}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={url}>
+  <meta property="og:image" content={ogAbs}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content={`${SITE.name}, ${SITE.category} in ${SITE.city}, ${SITE.region}`}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content={ogAbs}>
+  <meta name="twitter:image:alt" content={`${SITE.name}, ${SITE.category} in ${SITE.city}, ${SITE.region}`}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <script is:inline>
+    // motion class: effects only run when the visitor allows motion and JS is present; otherwise finished states show
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+  </script>
+  <!-- GSAP loads lazily (src/effects/gsap-lazy.ts): never in the initial load, never for the hero, only when the first
+       [data-gsap] section below the hero nears the viewport. Hero motion is CSS only (src/effects/Keyword.astro). -->
+  <script>
+    import { lazyGsap } from '../effects/gsap-lazy';
+    lazyGsap();
+  </script>
+</head>
+<body>
+  {bare ? <main id="main"><slot /></main> : <>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class:list={['site-header', { overlay: overlayHeader }]} data-header>
+    <div class="wrap navbar">
+      <a class="brand" href="/" aria-label={`${SITE.short} home`}>
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="37" height="37" rx="8"/><path d="M8 24 20 12l12 12M12 22v8h16v-8"/></svg>
+        <span class="brand-name">{SITE.short}</span>
+      </a>
+      <nav class="navlinks" aria-label="Main">
+        {SITE.nav.map((n) => <a href={n.href} aria-current={n.href === path ? 'page' : undefined}>{n.label}</a>)}
+      </nav>
+      <div class="navcta">
+        <a class="phone" href={`tel:${SITE.phoneE164}`}>{SITE.phone}</a>
+        <a class="btn btn-primary" href={action.href}>{action.label}</a>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mnav" data-menu-btn>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <span>Menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mnav on-dark" id="mnav" role="dialog" aria-modal="true" aria-label="Menu" data-mnav hidden>
+    <div class="wrap mnav-top">
+      <span class="brand-name">{SITE.short}</span>
+      <button class="menu-btn mnav-close" type="button" data-menu-close>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        <span>Close</span>
+      </button>
+    </div>
+    <nav class="wrap mnav-body" aria-label="Main, phone">
+      <ul class="mnav-main">
+        <li><a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a></li>
+        {SITE.nav.map((n) => <li><a href={n.href} aria-current={n.href === path ? 'page' : undefined}>{n.label}</a></li>)}
+      </ul>
+      <ul class="mnav-tiles">
+        {SITE.areas.slice(0, 4).map((a) => <li><a href={`/service-areas/${a.toLowerCase().replace(/\s+/g, '-')}`}>{a}</a></li>)}
+      </ul>
+      <div class="mnav-foot">
+        <a class="btn btn-primary" href={action.href}>{action.label}</a>
+        <a class="mnav-phone" href={`tel:${SITE.phoneE164}`}>Call {SITE.phone}</a>
+      </div>
+    </nav>
+  </div>
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <Footer />
+  <ActionBar />
+  <!-- Rigal Front Desk: ships on every site from day one and stays silent until the client row exists. The launcher
+       sits bottom right; src/styles/global.css reserves that corner above the mobile action bar. -->
+  <script src={`${CONFIG.frontDesk.domain}/widget.js`} data-client-id={CONFIG.clientId} async></script>
+  </>}
+</body>
+</html>
+
+<script>
+  // header: frosted and tighter after the first scroll
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    const onScroll = () => header.classList.toggle('scrolled', scrollY > 24);
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // phone and tablet menu: the header nav hides below 1100px, so this panel carries every page
+  const mBtn = document.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const mnav = document.querySelector<HTMLElement>('[data-mnav]');
+  if (mBtn && mnav) {
+    const setOpen = (open: boolean) => {
+      mnav.hidden = !open;
+      mBtn.setAttribute('aria-expanded', String(open));
+      document.documentElement.classList.toggle('menu-open', open);
+      if (open) mnav.querySelector<HTMLElement>('.mnav-main a')?.focus({ preventScroll: true });
+      else mBtn.focus({ preventScroll: true });
+    };
+    mBtn.addEventListener('click', () => setOpen(true));
+    mnav.querySelector('[data-menu-close]')?.addEventListener('click', () => setOpen(false));
+    mnav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !mnav.hidden) setOpen(false); });
+    matchMedia('(min-width: 1101px)').addEventListener('change', (e) => { if (e.matches && !mnav.hidden) setOpen(false); });
+  }
+</script>
+
+<style>
+  .site-header { position: sticky; top: 0; z-index: 40; padding: 12px 0; } /* padding never changes on scroll: a sticky header is in flow, so a height change shifts the whole page (CLS) */
+  .site-header.overlay { position: fixed; left: 0; right: 0; }
+  .navbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .site-header::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgb(244 241 236 / 0); border-bottom: 1px solid transparent; transition: background var(--t-slow) var(--ease), border-color var(--t-slow) var(--ease); }
+  .site-header.scrolled .navbar { transform: scale(0.97); transform-origin: center; }
+  .navbar { transition: transform var(--t-slow) var(--ease); }
+  .site-header.scrolled::before { background: rgb(244 241 236 / 0.92); border-color: var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .site-header.overlay:not(.scrolled) .brand, .site-header.overlay:not(.scrolled) .navlinks a, .site-header.overlay:not(.scrolled) .phone, .site-header.overlay:not(.scrolled) .menu-btn { color: #fff; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--brand); text-decoration: none; }
+  .brand-name { font-family: var(--f-display); font-weight: var(--w-display); font-size: 22px; letter-spacing: -0.01em; }
+  .navlinks { display: flex; gap: 4px; }
+  .navlinks a { padding: 10px 14px; border-radius: var(--r-pill); color: var(--brand); text-decoration: none; font-size: 15px; font-weight: var(--w-strong); transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+  .navlinks a:hover, .navlinks a[aria-current='page'] { background: rgb(29 35 42 / 0.07); }
+  .site-header.overlay:not(.scrolled) .navlinks a:hover { background: rgb(255 255 255 / 0.14); }
+  .navcta { display: flex; align-items: center; gap: 16px; }
+  .navcta .phone { color: var(--brand); text-decoration: none; font-weight: var(--w-strong); font-size: 15px; white-space: nowrap; }
+  .navcta .btn { min-height: 46px; padding: 0 20px; }
+  .menu-btn { display: none; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: var(--r-pill); border: 1px solid currentColor; background: transparent; color: var(--brand); font: var(--w-strong) 14px/1 var(--f-body); cursor: pointer; }
+  @media (max-width: 1100px) {
+    .navlinks, .navcta .phone, .navcta .btn { display: none; }
+    .menu-btn { display: inline-flex; }
+  }
+  @media (max-width: 1280px) { .navcta .phone { display: none; } }
+
+  .mnav { position: fixed; inset: 0; z-index: 90; background: var(--deep); color: #fff; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .mnav[hidden] { display: none; }
+  .mnav-top { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; padding-bottom: 14px; border-bottom: 1px solid rgb(255 255 255 / 0.14); }
+  .mnav-top .brand-name, .mnav-close { color: #fff; }
+  .mnav-body { display: flex; flex-direction: column; gap: 28px; padding-top: 24px; flex: 1; }
+  .mnav-main { list-style: none; margin: 0; padding: 0; }
+  .mnav-main a { display: block; padding: 6px 0; color: #fff; text-decoration: none; font-family: var(--f-display); font-weight: var(--w-display); font-size: clamp(36px, 9vw, 56px); line-height: 1.1; }
+  .mnav-main a[aria-current='page'] { color: var(--star); }
+  .mnav-tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mnav-tiles a { display: flex; align-items: center; min-height: 52px; padding: 10px 14px; border-radius: var(--r-card); border: 1px solid rgb(255 255 255 / 0.22); color: #fff; text-decoration: none; font-weight: var(--w-strong); }
+  .mnav-foot { margin-top: auto; display: flex; flex-direction: column; gap: 14px; }
+  .mnav-foot .btn { width: 100%; }
+  .mnav-phone { color: var(--on-deep); text-align: center; text-decoration: none; font-size: 17px; font-weight: var(--w-strong); padding: 8px; }
+  @media (prefers-reduced-motion: no-preference) { .mnav:not([hidden]) { animation: mnav-in 0.22s ease-out; } }
+  @keyframes mnav-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  :global(html.menu-open) { overflow: hidden; }
+</style>

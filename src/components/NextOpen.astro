@@ -1,0 +1,20 @@
+---
+// "Next open windows": three upcoming booking windows under the primary action, filled from /book/availability.
+// Renders nothing when booking is off; hidden until the service answers. Part of the booking slot in every hero and CTA.
+import { CONFIG } from '../site.config';
+import { SITE } from '../data/site';
+---
+{CONFIG.booking.enabled && <p class="next-open" data-next-open data-tz={SITE.hours.tz} hidden></p>}
+<script>
+  import { showNextOpen } from '../scripts/next-open';
+  const box = document.querySelector<HTMLElement>('[data-next-open]');
+  if (box) showNextOpen(box.dataset.tz);
+</script>
+<style>
+  .next-open { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 14px; }
+  .next-open :global(.next-open-label) { color: var(--muted); }
+  :global(.on-dark) .next-open :global(.next-open-label) { color: var(--on-deep); }
+  .next-open :global(a) { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--card); color: var(--brand); text-decoration: none; }
+  :global(.on-dark) .next-open :global(a) { background: rgb(255 255 255 / 0.1); border-color: rgb(255 255 255 / 0.3); color: #fff; }
+  @media (max-width: 900px) { .next-open { justify-content: center; } }
+</style>

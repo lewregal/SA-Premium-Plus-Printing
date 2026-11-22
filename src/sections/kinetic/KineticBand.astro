@@ -1,0 +1,27 @@
+---
+// Kinetic / KineticBand. The kinetic type direction's big moment, in the first section below the hero, where GSAP
+// may take over (loaded lazily once this band nears the viewport, never before the hero has painted). Three lines
+// at the XL size: solid, outlined, solid; the outlined line fills with color left to right (OutlinedToSolid with
+// fill, the page's shape morph), and one word in the supporting line settles out of a scramble (ScrambleText).
+// Fingerprint: layout type-led-center, headline outlined-alternating, density low, background deep-grain, effect outlined-to-solid, mood bold.
+// Best for: directly under hero/KineticType or hero/FullBleed on bars, auto and tire, bold contractors. Once per page.
+import OutlinedToSolid from '../../effects/OutlinedToSolid.astro';
+import ScrambleText from '../../effects/ScrambleText.astro';
+import Actions from '../../components/Actions.astro';
+interface Props { eyebrow?: string; lines?: string[]; line?: string; scramble?: string; primary?: { label: string; href: string }; secondary?: { label: string; href: string }; id?: string }
+const { eyebrow = 'This week', lines = ['Every game.', 'Every screen.', 'No cover.'], line = 'Doors open at', scramble = '4 PM', primary = { label: 'See the full calendar', href: '/events' }, secondary, id } = Astro.props;
+---
+<section class="sec kinetic-band ground-deep on-dark" id={id}>
+  <div class="wrap kinetic-inner">
+    <span class="eyebrow">{eyebrow}</span>
+    <OutlinedToSolid lines={lines} as="h2" class="h2 xl" fill />
+    <p class="lede kinetic-line">{line} <ScrambleText text={scramble} as="strong" class="kinetic-scramble" chars="upperCase" /></p>
+    <Actions primary={primary} secondary={secondary} />
+  </div>
+</section>
+<style>
+  .kinetic-inner { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-5); }
+  .kinetic-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35em; }
+  .kinetic-line :global(.kinetic-scramble) { font-family: var(--f-mono); font-weight: var(--w-strong); font-size: 1.25em; color: var(--star); }
+  @media (max-width: 900px) { .kinetic-inner { align-items: center; } .kinetic-line { justify-content: center; } }
+</style>

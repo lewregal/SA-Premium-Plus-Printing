@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import ReviewGrid from '../sections/reviews/ReviewGrid.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`Reviews | ${SITE.short}`} description={`Google reviews of ${SITE.short} in ${SITE.city}.`} path="/reviews">
+  <Banner crumbs={[{ name: 'Reviews', href: '/reviews' }]} eyebrow={`${SITE.short} reviews, ${SITE.city}, ${SITE.region}`} headline="In their words, not ours" line="Every review here is a real Google review, quoted as written." proof=" " />
+  <ReviewGrid />
+  <WashCta />
+</Base>

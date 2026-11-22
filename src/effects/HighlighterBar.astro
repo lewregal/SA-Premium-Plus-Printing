@@ -1,0 +1,22 @@
+---
+// Highlighter bar: a marker sweep grows left to right behind the lower third of a phrase (scaleX, origin left).
+// Wraps across lines with box-decoration-break so every wrapped line keeps its bar. Transform only.
+// Reduced motion or no JS: the bar is already full width.
+interface Props { text: string; color?: string }
+const { text, color = 'var(--accent-soft)' } = Astro.props;
+---
+<span class="fx-hl" data-fx="highlighter" style={`--hb:${color}`}><span class="fx-hl-bar" aria-hidden="true"></span><span class="fx-hl-text">{text}</span></span>
+
+<script>
+  import { inview } from './inview';
+  inview('[data-fx="highlighter"]', 0.6);
+</script>
+
+<style>
+  .fx-hl { position: relative; display: inline-block; padding: 0 0.1em; isolation: isolate; }
+  .fx-hl-text { position: relative; z-index: 1; }
+  .fx-hl-bar { position: absolute; left: 0; right: 0; bottom: 0.06em; height: 0.38em; background: var(--hb); z-index: 0; transform-origin: left center; border-radius: 2px; }
+  :global(html.motion) .fx-hl-bar { transform: scaleX(0); transition: transform 0.7s 0.15s var(--ease); }
+  :global(html.motion) .fx-hl.is-in .fx-hl-bar { transform: scaleX(1); }
+  @media (prefers-reduced-motion: reduce) { .fx-hl-bar { transform: none !important; } }
+</style>

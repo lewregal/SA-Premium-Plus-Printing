@@ -1,0 +1,16 @@
+---
+// Scribble underline: a hand drawn SVG stroke draws itself under one key phrase, once, on scroll into view.
+// At most once or twice per page (rigal-design-rules). Below the hero the engine is GSAP DrawSVG (loaded lazily);
+// the stroke is the one accepted exception to "transform and opacity only" because it repaints a single small SVG,
+// never layout. Reduced motion, no JS, or already in view when GSAP arrives: the underline is already drawn.
+// In a hero, use Keyword with variant="underline" instead (CSS only).
+interface Props { text: string; color?: string; weight?: number }
+const { text, color = 'var(--accent)', weight = 7 } = Astro.props;
+---
+<em class="fx-scribble" data-fx="scribble" data-gsap="scribble" style={`--c:${color};--sw:${weight}`}>{text}<svg viewBox="0 0 220 28" preserveAspectRatio="none" aria-hidden="true"><path d="M4 20 C 50 8, 120 4, 216 13" /></svg></em>
+
+<style>
+  .fx-scribble { position: relative; display: inline-block; font-style: normal; white-space: nowrap; }
+  .fx-scribble svg { position: absolute; left: -2%; bottom: -0.1em; width: 104%; height: 0.24em; overflow: visible; pointer-events: none; }
+  .fx-scribble path { fill: none; stroke: var(--c); stroke-width: var(--sw); stroke-linecap: round; }
+</style>

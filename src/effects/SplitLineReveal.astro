@@ -1,0 +1,14 @@
+---
+// Split line reveal: each rendered line of a headline rises out of its own line mask, top line first. Below the
+// hero only; the engine is GSAP SplitText (type lines, mask lines) loaded lazily by src/effects/gsap-lazy.ts.
+// The headline stays in the DOM as one text node (.fx-text, what screen readers and the audit read); GSAP splits an
+// aria-hidden copy (.fx-anim), shows it only while the reveal plays, then the real text comes back (is-done).
+// Transform and opacity only. Reduced motion, no JS, or above the fold when GSAP arrives: plain visible text.
+// In a hero use KeywordHeadline instead: hero headlines render complete at first paint, never through a reveal.
+interface Props { text: string; as?: 'h1' | 'h2' | 'h3' | 'p'; class?: string }
+const { text, as: Tag = 'h2', class: cls = 'h2' } = Astro.props;
+---
+<Tag class:list={['fx-gsap fx-split', cls]} data-fx="split-line" data-gsap="split-line">
+  <span class="fx-text">{text}</span>
+  <span class="fx-anim" aria-hidden="true">{text}</span>
+</Tag>

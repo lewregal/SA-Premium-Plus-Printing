@@ -1,0 +1,45 @@
+---
+// Services / ServicesGrid. Every GBP service as a compact row card (icon, name, one line, a specific link),
+// two columns, on the card ground. Fingerprint: layout 2-col-rows, headline bold-solid, density high, background card-plain,
+// effect none, mood steady. Best for: the services hub page and a long service list on the home page.
+interface Svc { name: string; text: string; href: string; cta: string }
+interface Props { eyebrow?: string; headline?: string; services?: Svc[]; id?: string }
+const { eyebrow = 'Every service', headline = 'Pick the one you need', services = [
+  { name: 'Roof repair', text: 'Leaks, flashing and missing shingles.', href: '/services/roof-repair', cta: 'Stop the leak' },
+  { name: 'Roof replacement', text: 'Full tear off and new roof.', href: '/services/roof-replacement', cta: 'Price a new roof' },
+  { name: 'Storm inspection', text: 'Free look after hail or wind.', href: '/services/storm-inspection', cta: 'Check for damage' },
+  { name: 'Gutters', text: 'Seamless gutters and guards.', href: '/services/gutters', cta: 'Sort the gutters' },
+  { name: 'Metal roofing', text: 'Standing seam and R panel.', href: '/services/metal-roofing', cta: 'Compare metal' },
+  { name: 'Commercial roofing', text: 'Flat and low slope systems.', href: '/services/commercial-roofing', cta: 'Talk about a building' },
+], id } = Astro.props;
+---
+<section class="sec ground-card" id={id}>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow pill">{eyebrow}</span>
+      <h2 class="h2">{headline}</h2>
+    </div>
+    <ul class="svc-grid">
+      {services.map((s, i) => (
+        <li>
+          <a class="svc" href={s.href}>
+            <span class="svc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span class="svc-body"><strong class="h3">{s.name}</strong><span>{s.text}</span></span>
+            <span class="svc-go">{s.cta} <span aria-hidden="true">&rarr;</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>
+  .svc-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  .svc { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--s-5); align-items: center; padding: var(--s-5) var(--s-6); border: 1px solid var(--line); border-radius: var(--r-card); background: var(--paper); color: inherit; text-decoration: none; text-align: left; transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease); }
+  .svc:hover { transform: translateY(-3px); border-color: var(--brand); box-shadow: var(--shadow-1); color: inherit; }
+  .svc-num { font-family: var(--f-display); font-weight: var(--w-display); font-size: 28px; color: var(--accent); line-height: 1; }
+  .svc-body { display: flex; flex-direction: column; gap: 4px; }
+  .svc-body .h3 { font-size: 20px; }
+  .svc-body span { font-size: 15px; color: var(--muted); }
+  .svc-go { font-size: 12px; font-weight: var(--w-strong); letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); white-space: nowrap; }
+  @media (max-width: 900px) { .svc-grid { grid-template-columns: 1fr; } .svc { grid-template-columns: auto minmax(0, 1fr); } .svc-go { grid-column: 2; } }
+</style>

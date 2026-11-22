@@ -1,0 +1,21 @@
+---
+// Cta / WashCta. Centered 680px column on the deep wash: heading, one or two short lines, one solid primary and
+// an outline secondary (call). 15 to 60 words. Fingerprint: layout centered-column, headline bold-solid, density low,
+// background deep-grain, effect scribble-underline, mood steady. Best for: the last section before the footer on every page.
+import type { SectionProps } from '../types';
+import Actions from '../../components/Actions.astro';
+import ScribbleUnderline from '../../effects/ScribbleUnderline.astro';
+import { SITE } from '../../data/site';
+const { eyebrow = 'Ready when you are', headline = 'Get a clear quote', emphasis = 'this week', line = 'Tell us what you are seeing. We will look, explain the options in plain words and send a written price.', primary, secondary = { label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` }, id } = Astro.props as SectionProps;
+---
+<section class="sec tight ground-deep on-dark center" id={id}>
+  <div class="wrap narrow stack" style="align-items: center">
+    <span class="eyebrow">{eyebrow}</span>
+    <h2 class="h2">{headline} <ScribbleUnderline text={emphasis} color="var(--star)" /></h2>
+    <p class="lede" style="text-align: center">{line}</p>
+    <Actions primary={primary} secondary={secondary} class="center-row" />
+  </div>
+</section>
+<style>
+  .center-row { justify-content: center; }
+</style>

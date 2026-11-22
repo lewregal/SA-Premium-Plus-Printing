@@ -1,0 +1,19 @@
+---
+// Scramble text: the characters of one word or short phrase settle from a scramble into the real text, once, on
+// scroll into view (GSAP ScrambleTextPlugin, loaded lazily below the hero). Reads like a departures board or a
+// pump display: bars, auto and tire, anything with a counter culture. Never on body copy, never in the hero, once
+// per page. The real text stays one text node (.fx-text); the scramble runs on an aria-hidden copy and the real
+// text returns when it is done, so no half scrambled frame is ever what a reader or the audit sees.
+// Paint only exception: text content changes inside one inline element of fixed width (ch units), no layout.
+// Reduced motion or no JS: the plain text.
+interface Props { text: string; as?: 'span' | 'strong' | 'em' | 'p' | 'h2' | 'h3'; class?: string; chars?: 'upperCase' | 'lowerCase' | 'upperAndLowerCase' | string }
+const { text, as: Tag = 'span', class: cls = '', chars = 'upperCase' } = Astro.props;
+---
+<Tag class:list={['fx-gsap fx-inline fx-scramble', cls]} data-fx="scramble" data-gsap="scramble" data-chars={chars}>
+  <span class="fx-text">{text}</span>
+  <span class="fx-anim" aria-hidden="true">{text}</span>
+</Tag>
+<style>
+  .fx-scramble { font-variant-numeric: tabular-nums; }
+  .fx-scramble > .fx-anim { white-space: pre; }
+</style>

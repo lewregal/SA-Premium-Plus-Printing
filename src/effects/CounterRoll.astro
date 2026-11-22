@@ -1,0 +1,36 @@
+---
+// Counter roll: a number rolls up digit by digit, like an odometer, once in view. Each digit is a column of
+// 0 to 9 inside a 1em tall mask that translates up (transform only). Use for real counts from the client
+// (years in business, jobs, reviews), never for invented stats. Reduced motion or no JS: the final number.
+interface Props { value: number; prefix?: string; suffix?: string; label?: string; class?: string }
+const { value, prefix = '', suffix = '', label, class: cls = '' } = Astro.props;
+const digits = String(Math.round(value)).split('');
+---
+<span class:list={['fx-counter', cls]} data-fx="counter" role="img" aria-label={`${prefix}${value}${suffix}${label ? ' ' + label : ''}`}>
+  <span class="fx-counter-num" aria-hidden="true">
+    {prefix && <span class="fx-counter-fix">{prefix}</span>}
+    {digits.map((d, i) => <span class="fx-counter-digit" style={`--d:${d};--i:${i}`}><span class="fx-counter-col">{[0,1,2,3,4,5,6,7,8,9].map((n) => <span>{n}</span>)}</span></span>)}
+    {suffix && <span class="fx-counter-fix">{suffix}</span>}
+  </span>
+  {label && <span class="fx-counter-label" aria-hidden="true">{label}</span>}
+</span>
+
+<script>
+  import { inview } from './inview';
+  inview('[data-fx="counter"]', 0.6);
+</script>
+
+<style>
+  .fx-counter { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .fx-counter-num { display: inline-flex; font-family: var(--f-display); font-weight: var(--w-display); font-size: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem); line-height: 1; color: var(--brand); font-variant-numeric: tabular-nums; }
+  :global(.on-dark) .fx-counter-num { color: #fff; }
+  .fx-counter-digit { display: inline-block; height: 1em; overflow: hidden; }
+  .fx-counter-col { display: flex; flex-direction: column; transform: translateY(calc(var(--d) * -1em)); }
+  .fx-counter-col span { display: block; height: 1em; }
+  .fx-counter-label { font-size: var(--fs-small); color: var(--muted); }
+  :global(.on-dark) .fx-counter-label { color: var(--on-deep); }
+  :global(html.motion) .fx-counter-col { transform: translateY(0); transition: transform 1.4s var(--ease); transition-delay: calc(var(--i) * 0.08s); }
+  :global(html.motion) .fx-counter.is-in .fx-counter-col { transform: translateY(calc(var(--d) * -1em)); }
+  @media (prefers-reduced-motion: reduce) { .fx-counter-col { transform: translateY(calc(var(--d) * -1em)) !important; } }
+  @media (max-width: 900px) { .fx-counter { align-items: center; } }
+</style>

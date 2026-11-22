@@ -1,0 +1,22 @@
+---
+// Gradient sweep: a band of accent color sweeps once through a headline phrase (background-clip text, the
+// gradient moves by background-position: paint only on one element, the accepted exception). It ends on the
+// `to` color so the phrase reads as a solid, high contrast word afterwards. Reduced motion or no JS: solid `to` color.
+interface Props { text: string; from?: string; via?: string; to?: string }
+const { text, from = 'var(--brand)', via = 'var(--star)', to = 'var(--accent)' } = Astro.props;
+---
+<span class="fx-sweep" data-fx="sweep" style={`--from:${from};--via:${via};--to:${to}`}>{text}</span>
+
+<script>
+  import { inview } from './inview';
+  inview('[data-fx="sweep"]', 0.6);
+</script>
+
+<style>
+  .fx-sweep { color: var(--to); }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    :global(html.motion) .fx-sweep { color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(100deg, var(--to) 0 38%, var(--via) 46%, var(--from) 54% 100%); background-size: 280% 100%; background-position: 100% 0; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; transition: background-position 1.1s 0.2s cubic-bezier(0.45, 0.05, 0.25, 1); }
+    :global(html.motion) .fx-sweep.is-in { background-position: 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fx-sweep { color: var(--to) !important; -webkit-text-fill-color: var(--to) !important; background: none !important; } }
+</style>

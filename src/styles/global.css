@@ -1,0 +1,165 @@
+/* Rigal Astro starter: shared layout, type roles, grounds, buttons, cards.
+   Brand decisions live in tokens.css. Sections in src/sections/ use these classes and add their own scoped CSS. */
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 24px; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-weight: var(--w-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: var(--brand); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+p, h1, h2, h3, h4, ul, ol, figure, blockquote, dl, dd { margin: 0; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: fixed; left: 16px; top: -80px; z-index: 200; padding: 12px 18px; border-radius: var(--r-btn); background: var(--accent); color: var(--accent-ink); font-weight: var(--w-strong); text-decoration: none; }
+.skip:focus { top: 12px; }
+
+/* layout */
+.wrap { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+.narrow { max-width: 680px; margin: 0 auto; }
+.sec { position: relative; isolation: isolate; overflow: hidden; padding: var(--sec-y) 0; }
+.sec.tight { padding: var(--sec-y-tight) 0; }
+.split { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); }
+.g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+.g4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+.stack { display: flex; flex-direction: column; gap: var(--s-5); }
+.center { text-align: center; }
+.sec-head { display: flex; flex-direction: column; gap: var(--s-4); max-width: 720px; margin-bottom: var(--s-8); }
+.sec-head.center { margin-left: auto; margin-right: auto; align-items: center; }
+@media (max-width: 900px) {
+  .split, .g2, .g3, .g4 { grid-template-columns: minmax(0, 1fr); }
+  .g4.m2, .g2.m2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  .split > *, .g2 > *, .g3 > *, .g4 > * { min-width: 0; }
+  .sec-head { margin-bottom: var(--s-7); }
+}
+
+/* type roles: personality in the headline, body stays clean */
+.h1, .h2, .h3 { font-family: var(--f-display); color: var(--brand); text-wrap: balance; }
+.h1 { font-size: var(--fs-h1); font-weight: var(--w-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); text-transform: var(--tt-display); }
+.h2 { font-size: var(--fs-h2); font-weight: var(--w-display); line-height: calc(var(--lh-display) + 0.06); letter-spacing: var(--ls-display); text-transform: var(--tt-display); }
+.xl { font-size: var(--fs-xl); line-height: calc(var(--lh-display) - 0.02); }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.h3 { font-size: var(--fs-h3); font-weight: var(--w-heading); line-height: var(--lh-heading); letter-spacing: -0.01em; }
+.lede { font-size: var(--fs-lede); line-height: 1.55; max-width: var(--measure); }
+.measure { max-width: var(--measure); }
+.small { font-size: var(--fs-small); color: var(--muted); }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: var(--fs-eyebrow); font-weight: var(--w-strong); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--muted); }
+.eyebrow.pill { padding: 6px 14px; border-radius: var(--r-pill); background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+.script { font-family: var(--f-script); font-style: var(--script-style); font-weight: var(--script-weight); color: var(--accent); font-size: 1.35em; line-height: 1; letter-spacing: 0; }
+
+/* GBP Core Alignment: the H1 is the kicker pill; the big headline is a p.display. No dot in the pill (and none in .eyebrow): plain text only. */
+.crumb { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 6px 14px; border-radius: var(--r-pill); font-family: var(--f-body); font-size: 13px; font-weight: var(--w-strong); letter-spacing: 0.02em; background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+
+/* dark grounds flip the roles */
+.on-dark, .on-dark .h1, .on-dark .h2, .on-dark .h3 { color: var(--on-deep-strong); }
+.on-dark p, .on-dark li, .on-dark .lede { color: var(--on-deep); }
+.on-dark .eyebrow { color: var(--on-deep); }
+.on-dark .small { color: var(--on-deep); opacity: 0.85; }
+.on-dark a:not(.btn) { color: var(--on-deep-strong); }
+.on-dark .crumb { background: rgb(255 255 255 / 0.1); border-color: rgb(255 255 255 / 0.3); color: #fff; }
+.on-dark .script { color: var(--star); }
+
+/* grounds (Step 4 archetypes). Only the footer may be a plain solid. */
+.ground-paper { background-color: var(--paper); background-image: var(--tx-pattern); background-size: var(--tx-pattern-size); }
+.ground-card { background: var(--card); }
+.ground-wash { background-color: var(--brand); color: var(--on-deep); }
+.ground-wash::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--tx-wash) center / 480px 480px repeat; opacity: 0.5; mix-blend-mode: soft-light; pointer-events: none; }
+.ground-deep { background-color: var(--deep); color: var(--on-deep); }
+.ground-deep::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--tx-wash) center / 480px 480px repeat; opacity: 0.35; mix-blend-mode: soft-light; pointer-events: none; }
+.ground-mark::after { content: ""; position: absolute; z-index: -1; width: 380px; aspect-ratio: 1; right: -140px; bottom: -120px; opacity: var(--tx-mark-opacity); background: var(--tx-mark) center / contain no-repeat; pointer-events: none; }
+@media (max-width: 900px) { .ground-mark::after { width: 220px; right: -60px; top: -30px; bottom: auto; } }
+
+/* buttons: the accent fill is the only primary; outline only beside a solid primary */
+.btn { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: var(--r-btn); border: 1.5px solid transparent; font-family: var(--f-body); font-size: 15px; font-weight: var(--w-strong); letter-spacing: 0.01em; text-decoration: none; cursor: pointer; transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), color var(--t-slow) var(--ease), border-color var(--t-slow) var(--ease); }
+.btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--fill, var(--deep)); transform: translateY(102%); transition: transform var(--t-slow) var(--ease); }
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+.btn:hover::before, .btn:focus-visible::before { transform: translateY(0); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); --fill: var(--deep); }
+.btn-primary:hover { color: #fff; }
+.btn-secondary { background: transparent; color: var(--brand); border-color: currentColor; --fill: var(--brand); }
+.btn-secondary:hover { color: #fff; }
+.on-dark .btn-secondary { color: var(--on-deep-strong); --fill: var(--card); }
+.on-dark .btn-secondary:hover { color: var(--deep); }
+.btn svg { transition: transform var(--t-fast) var(--ease); }
+.btn:hover svg { transform: translateX(4px); }
+.btnrow { display: flex; flex-wrap: wrap; gap: var(--s-4); }
+.tlink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: var(--w-strong); color: var(--brand); text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 2px no-repeat; transition: background-size var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.tlink:hover, .tlink:focus-visible { background-size: 100% 2px; color: var(--accent); }
+@media (max-width: 600px) { .btnrow .btn { width: 100%; } }
+
+/* cards and frames */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); transition: transform var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease), border-color var(--t-slow) var(--ease); }
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-1); }
+.card .grow { flex-grow: 1; }
+.frame { position: relative; width: 100%; overflow: hidden; border-radius: var(--r-media); background: var(--brand); aspect-ratio: 4 / 5; }
+.frame img, .frame svg, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow) var(--ease); }
+.frame:hover img { transform: scale(1.05); }
+.frame.arch { border-radius: 999px 999px var(--r-media) var(--r-media); }
+.frame.pitch { border-radius: 0; clip-path: polygon(50% 0, 100% 18%, 100% 100%, 0 100%, 0 18%); }   /* roof pitch, for trades */
+.frame.chamfer { border-radius: 0; clip-path: polygon(8% 0, 100% 0, 100% 92%, 92% 100%, 0 100%, 0 8%); }
+.frame.wide { aspect-ratio: 16 / 10; }
+.frame.square { aspect-ratio: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s-3); list-style: none; padding: 0; margin: 0; }
+.chips a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: var(--r-pill); border: 1px solid var(--line); background: var(--card); color: var(--brand); font-size: 15px; text-decoration: none; transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.chips a:hover { transform: translateY(-2px); background: var(--brand); color: #fff; }
+
+/* highlighter bar behind the lower third of a key phrase (static form; the drawn form is src/effects/HighlighterBar.astro) */
+.hbar { --hb: var(--accent-soft); padding: 0 0.1em; background: linear-gradient(var(--hb), var(--hb)) 0 88% / 100% 0.32em no-repeat; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.on-dark .hbar { --hb: rgb(255 255 255 / 0.18); }
+
+/* placeholder art: dashed frame with a label, replaced by the client's own photos */
+.ph { position: absolute; inset: 0; display: grid; place-items: center; background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.08) 0 12px, transparent 12px 24px), var(--brand); color: #fff; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; text-align: center; padding: var(--s-4); }
+.ph.light { background: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.05) 0 12px, transparent 12px 24px), var(--accent-soft); color: var(--ink); }
+
+/* Rigal Front Desk launcher: the widget mounts bottom right. Nothing of ours may sit in that corner, and on phones
+   the launcher is lifted above the action bar (the widget reads this custom property when present). */
+:root { --fd-offset-bottom: 16px; --fd-offset-right: 16px; }
+@media (max-width: 1100px) { :root { --fd-offset-bottom: calc(96px + env(safe-area-inset-bottom)); } }
+
+/* sitewide grain: a faint tooth over everything, never over 4% opacity */
+html::after { content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: var(--tx-grain-opacity); background-image: var(--tx-grain); background-size: 180px 180px; }
+@media print { html::after { display: none; } }
+
+/* phones: text is centered except inside cards and forms */
+@media (max-width: 900px) {
+  main { text-align: center; }
+  .stack, .sec-head { align-items: center; margin-left: auto; margin-right: auto; }
+  .split > div { margin-left: auto; margin-right: auto; width: 100%; }
+  .btnrow, .chips, .eyebrow { justify-content: center; }
+  .crumb { align-self: center; }
+  .card, .form, .faq, .left-m { text-align: left; }
+  .card .stack { align-items: stretch; }
+}
+
+/* GSAP text effects (src/effects/gsap-effects.ts, loaded lazily below the hero). The real sentence is .fx-text, one
+   text node, always in the DOM. GSAP animates the aria-hidden copy .fx-anim: the component arms itself (is-armed) only
+   once GSAP has loaded and the element is still below the fold, and marks is-done when the choreography ends, so the
+   real text is what screen readers, search engines and the audit read, and what is visible before and after. */
+.fx-gsap { display: grid; }
+.fx-gsap.fx-inline { display: inline-grid; vertical-align: baseline; }
+.fx-gsap > .fx-text, .fx-gsap > .fx-anim { grid-area: 1 / 1; min-width: 0; }
+.fx-gsap > .fx-anim { display: none; }
+html.motion .fx-gsap.is-armed:not(.is-done) > .fx-text { visibility: hidden; }
+html.motion .fx-gsap.is-armed:not(.is-done) > .fx-anim { display: block; }
+html.motion .fx-gsap.fx-inline.is-armed:not(.is-done) > .fx-anim { display: inline-block; }
+.fx-anim .line-mask { padding: 0 0.12em 0.14em; margin: 0 -0.12em -0.14em; }  /* SplitText's mask wrapper: room for descenders */
+.fx-anim .line { display: block; }
+.fx-anim .w { display: inline-block; }
+
+/* reduced motion: every transition and animation stops; effects show their finished state (see src/effects/) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .btn:hover, .card:hover, .chips a:hover { transform: none; }
+}

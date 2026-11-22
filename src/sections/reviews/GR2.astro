@@ -1,0 +1,9 @@
+---
+// Reviews / GR2 (grid). The original three card grid on the paper ground (ReviewGrid), fed from the shared reviews
+// data so every GR style takes the same list. See ReviewGrid.astro for the layout notes.
+import ReviewGrid from './ReviewGrid.astro';
+import { REVIEWS, type Review } from '../../data/reviews';
+interface Props { eyebrow?: string; headline?: string; reviews?: Review[]; id?: string }
+const { reviews = REVIEWS.slice(0, 3), ...rest } = Astro.props;
+---
+<ReviewGrid {...rest} reviews={reviews.map((r) => ({ text: r.text, author: r.author, when: r.when ?? '', service: r.service, url: r.url }))} />

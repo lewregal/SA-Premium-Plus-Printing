@@ -1,0 +1,21 @@
+---
+// Areas / AreaChips. Service area list as chips beside a short paragraph, on the paper ground. Each chip links to
+// its town page. Fingerprint: layout split-left-head, headline bold-solid, density medium, background paper-pattern,
+// effect none, mood steady. Best for: the home page and service pages of any mobile or multi town business.
+import { SITE } from '../../data/site';
+interface Props { eyebrow?: string; headline?: string; line?: string; areas?: string[]; hubHref?: string; id?: string }
+const { eyebrow = 'Where we work', headline = `Serving ${SITE.city} and the towns around it`, line = 'Same crew, same pricing, from the city out to the surrounding towns. Pick yours to see recent work nearby.', areas = SITE.areas, hubHref = '/service-areas', id } = Astro.props;
+---
+<section class="sec tight ground-paper" id={id}>
+  <div class="wrap split" style="align-items: start">
+    <div class="stack" style="max-width: 520px">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 class="h2">{headline}</h2>
+      <p class="measure">{line}</p>
+    </div>
+    <ul class="chips" aria-label="Areas served">
+      {areas.map((a) => <li><a href={`${hubHref}/${a.toLowerCase().replace(/\s+/g, '-')}`}>{a}</a></li>)}
+      <li><a href={hubHref}>All service areas</a></li>
+    </ul>
+  </div>
+</section>

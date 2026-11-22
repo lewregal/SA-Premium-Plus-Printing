@@ -1,0 +1,13 @@
+---
+// Sample inner page used by the kinetic hero's "see what is on tonight" action (bars). A client build renames or removes it.
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import CardGrid from '../sections/paper/CardGrid.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`This week | ${SITE.short}`} description={`What is on this week at ${SITE.short}.`} path="/events">
+  <Banner crumbs={[{ name: 'This week', href: '/events' }]} eyebrow={`What is on at ${SITE.short}, ${SITE.city}, ${SITE.region}`} headline="This week, night by night" line="Games, specials and events, updated every Monday." proof=" " />
+  <CardGrid eyebrow="This week" headline="Three nights worth planning for" photos={false} cards={[{ title: 'Game night', text: 'Every screen on the game, sound up for the big one.', href: '/contact', cta: 'Reserve a table for the game' }, { title: 'Trivia', text: 'Teams of up to six, prizes for the top three.', href: '/contact', cta: 'Sign a team up' }, { title: 'Live music', text: 'Local acts on the patio, weather permitting.', href: '/contact', cta: 'Ask who is playing' }]} />
+  <WashCta />
+</Base>

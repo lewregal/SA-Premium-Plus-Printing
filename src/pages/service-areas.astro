@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import AreaChips from '../sections/areas/AreaChips.astro';
+import AreaMap from '../sections/areas/AreaMap.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`Service areas | ${SITE.short}`} description={`Towns around ${SITE.city} that ${SITE.short} serves.`} path="/service-areas">
+  <Banner crumbs={[{ name: 'Service areas', href: '/service-areas' }]} eyebrow={`${SITE.category} near ${SITE.city}, ${SITE.region}`} headline="Where we work" line="Pick your town for recent work nearby and the fastest way to reach us." />
+  <AreaChips />
+  <AreaMap />
+  <WashCta />
+</Base>

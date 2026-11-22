@@ -1,0 +1,16 @@
+---
+// Keyword headline: the hero headline rendered complete at first paint, with the keyword (the service or city the
+// Google Business Profile ranks for) wrapped in a CSS only Keyword moment. No reveal, no script: the whole sentence
+// is plain text in the first frame. Pass `keyword` to name the word; leave it out and the word is picked from the
+// page data (src/effects/keyword.ts). When no candidate is in the headline, the headline renders without a moment,
+// which the audit then flags, so write the headline around the service or the city.
+import Keyword from './Keyword.astro';
+import { pickKeyword, splitKeyword } from './keyword';
+interface Props { text: string; keyword?: string; candidates?: string[]; variant?: 'highlighter' | 'underline' | 'fill'; as?: 'h1' | 'h2' | 'p' | 'span'; class?: string; second?: { text: string; variant?: 'highlighter' | 'underline' | 'fill' } }
+const { text, keyword, candidates, variant = 'highlighter', as: Tag = 'p', class: cls = 'h1', second } = Astro.props;
+const kw = keyword ?? (candidates ? pickKeyword(text, candidates) : pickKeyword(text));
+const [before, word, after] = splitKeyword(text, kw);
+// an optional second moment follows the first and sits after it in the sentence
+const [after1, word2, after2] = second && after ? splitKeyword(after, second.text) : [after, '', ''];
+---
+<Tag class:list={['fx-kwh', cls]} data-keyword={word || undefined}>{before}{word && <Keyword text={word} variant={variant} />}{after1}{word2 && <Keyword text={word2} variant={second!.variant || 'underline'} lead={false} />}{after2}</Tag>

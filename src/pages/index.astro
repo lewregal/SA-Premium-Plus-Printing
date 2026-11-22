@@ -1,0 +1,28 @@
+---
+// Minimal composed sample page: the reference home order from rigal-web-design (Hero, marquee band directly below it,
+// trust, services, story, reviews, areas, FAQ, Wash CTA). Swap variants by changing the imports; every section reads
+// from site.ts and props. The hero renders complete at first paint with one CSS keyword moment; GSAP loads lazily
+// for the sections below it.
+import Base from '../layouts/Base.astro';
+import SplitPhoto from '../sections/hero/SplitPhoto.astro';
+import TrustLine from '../sections/trust/TrustLine.astro';
+import CardGrid from '../sections/paper/CardGrid.astro';
+import Narrative from '../sections/mark/Narrative.astro';
+import ReviewGrid from '../sections/reviews/ReviewGrid.astro';
+import AreaChips from '../sections/areas/AreaChips.astro';
+import Faq from '../sections/faq/Faq.astro';
+import WashCta from '../sections/cta/WashCta.astro';
+import MarqueeBand from '../sections/marquee/MarqueeBand.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`${SITE.category} in ${SITE.city}, ${SITE.region} | ${SITE.short}`} description={`${SITE.short} is a ${SITE.category.toLowerCase()} serving ${SITE.city} and nearby towns. Call ${SITE.phone} for a written estimate.`} path="/">
+  <SplitPhoto />
+  <MarqueeBand items={['Roof repair', 'Replacement', 'Storm inspection', 'Gutters', 'Metal roofing']} />
+  <TrustLine />
+  <CardGrid />
+  <Narrative />
+  <ReviewGrid />
+  <AreaChips />
+  <Faq />
+  <WashCta />
+</Base>

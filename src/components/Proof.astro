@@ -1,0 +1,20 @@
+---
+// Trust line: stars plus the Google rating and count, linked to the reviews. With reviewCount 0 it shows
+// a plain "read our Google reviews" link so nothing invented ever appears. Pass `text` to show other proof instead.
+import { SITE } from '../data/site';
+interface Props { text?: string; class?: string }
+const { text, class: cls = '' } = Astro.props;
+const star = 'M8 1l2.1 4.4 4.8.6-3.5 3.3.9 4.7L8 11.7 3.7 14l.9-4.7L1.1 6l4.8-.6z';
+---
+<p class:list={['proof', cls]}>
+  {!text && <svg width="92" height="16" viewBox="0 0 92 16" role="img" aria-label="5 out of 5 stars"><g fill="var(--star)">{[0, 19, 38, 57, 76].map((x) => <path transform={`translate(${x} 0)`} d={star} />)}</g></svg>}
+  {text ? <span>{text}</span> : SITE.reviewCount > 0
+    ? <span><strong>{SITE.rating} on Google</strong> from {SITE.reviewCount} reviews. <a href={SITE.googleReviews} rel="noopener">Read them</a></span>
+    : <span>Our Google reviews are public. <a href={SITE.googleReviews} rel="noopener">Read them</a></span>}
+</p>
+<style>
+  .proof { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 15px; margin: 0; }
+  .proof a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; display: inline-flex; align-items: center; min-height: 24px; }
+  .proof strong { font-weight: var(--w-strong); }
+  @media (max-width: 900px) { .proof { justify-content: center; } }
+</style>

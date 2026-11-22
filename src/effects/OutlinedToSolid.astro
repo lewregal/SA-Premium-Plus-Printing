@@ -1,0 +1,32 @@
+---
+// Outlined to solid: a headline set in alternating solid and outlined (stroke only) lines at the same size,
+// Lou's signature move. With `fill` the outlined lines fill with solid color left to right once in view: GSAP
+// (loaded lazily, below the hero only) clips a solid copy of each line from inset(0 100% 0 0) to inset(0 0 0 0),
+// so glyph positions never move. This is the kinetic set piece of src/sections/kinetic/KineticBand.astro.
+// Reduced motion, no JS, or already in view when GSAP arrives: with fill the lines are solid; without, they stay
+// outlined. Both read as a sentence. Outline contrast: the stroke is 1.5px of the text color, so check it against
+// the ground like any large text. Never in a hero (hero headlines render complete at first paint).
+interface Props { lines: string[]; as?: 'h1' | 'h2' | 'p'; class?: string; fill?: boolean; outlineFirst?: boolean; stroke?: string }
+const { lines, as: Tag = 'h2', class: cls = 'h2', fill = false, outlineFirst = false, stroke = '1.5px' } = Astro.props;
+---
+<Tag class:list={['fx-outline', cls, { 'has-fill': fill }]} data-fx="outlined" data-gsap={fill ? 'outlined' : undefined} style={`--stroke:${stroke}`}>
+  {lines.map((l, i) => {
+    const outlined = outlineFirst ? i % 2 === 0 : i % 2 === 1;
+    return <span class:list={['ln', { 'is-outlined': outlined }]} style={`--i:${i}`}>
+      <span class="ln-base">{l}</span>
+      {outlined && fill && <span class="ln-fill" aria-hidden="true"><span class="ln-fill-in">{l}</span></span>}
+    </span>;
+  })}
+</Tag>
+
+<style>
+  .fx-outline .ln { position: relative; display: block; }
+  .fx-outline .ln.is-outlined .ln-base { color: transparent; -webkit-text-stroke: var(--stroke) currentColor; }
+  .fx-outline .ln.is-outlined { color: inherit; }
+  .fx-outline .ln.is-outlined .ln-base { -webkit-text-stroke-color: var(--brand); }
+  :global(.on-dark) .fx-outline .ln.is-outlined .ln-base { -webkit-text-stroke-color: var(--on-deep-strong); }
+  .ln-fill { position: absolute; inset: 0; pointer-events: none; }  /* no overflow clip: descenders stay whole; GSAP clips the inner copy with clip-path */
+  .ln-fill-in { display: block; color: var(--brand); }
+  :global(.on-dark) .ln-fill-in { color: var(--on-deep-strong); }
+  @supports not (-webkit-text-stroke: 1px #000) { .fx-outline .ln.is-outlined .ln-base { color: inherit; opacity: 0.55; } }
+</style>

@@ -1,0 +1,8 @@
+---
+import Base from '../layouts/Base.astro';
+import Banner from '../sections/banner/Banner.astro';
+import { SITE } from '../data/site';
+---
+<Base title={`Page not found | ${SITE.short}`} description="That page is not here." path="/404" noindex>
+  <Banner crumbs={[{ name: 'Not found', href: '/404' }]} eyebrow="Page not found" headline="That page moved or never existed" line="Try the menu, or call and we will point you the right way." primary={{ label: 'Back to the home page', href: '/' }} proof=" " />
+</Base>

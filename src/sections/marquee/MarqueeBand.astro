@@ -1,0 +1,17 @@
+---
+// Marquee / MarqueeBand. The looping row as its own thin section, placed directly below the hero by default
+// (Lou, 2026-11-07: the marquee sits under the hero, not inside it, and only moves further down the page when
+// Lou says so). Wraps src/effects/Marquee.astro on the deep ground so it never measures against a hero photo.
+// Fingerprint: layout row-strip, headline none, density low, background deep-grain, effect marquee, mood bold.
+// Best for: specials, brands carried, services, trust logos. Bars, auto, contractors with partners. One per page.
+import Marquee from '../../effects/Marquee.astro';
+interface Props { items: string[]; speed?: number; id?: string }
+const { items, speed = 40, id } = Astro.props;
+---
+<section class="marquee-band ground-deep on-dark" id={id} aria-label="Highlights">
+  <Marquee items={items} speed={speed} />
+</section>
+<style>
+  .marquee-band { position: relative; isolation: isolate; overflow: hidden; }
+  .marquee-band :global(.fx-marquee) { border-top: 0; border-bottom: 1px solid rgb(255 255 255 / 0.1); }
+</style>

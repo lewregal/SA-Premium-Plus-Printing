@@ -1,0 +1,64 @@
+---
+// Hero / KineticType. The headline is the visual: three short lines in the display face at the XL size on the deep
+// ground, complete at first paint, with the keyword (the service or the city) carrying a CSS only color fill moment,
+// and a handwritten script accent beside it. No hero image needed, no GSAP: the kinetic set piece (outlined lines
+// that fill, scramble) lives in the first section below, src/sections/kinetic/KineticBand.astro, where GSAP may
+// take over once the hero has painted.
+// Fingerprint: layout type-led-center, headline uppercase-condensed keyword, density low, background deep-grain, effect keyword-fill, mood bold.
+// Best for: Kinetic typography, Expressive. Bars, auto and tire, bold contractors. Pairs with the druk or screamer preset.
+import type { SectionProps } from '../types';
+import Proof from '../../components/Proof.astro';
+import Actions from '../../components/Actions.astro';
+import ScriptAccent from '../../effects/ScriptAccent.astro';
+import KeywordHeadline from '../../effects/KeywordHeadline.astro';
+import { SITE } from '../../data/site';
+import { pickKeyword } from '../../effects/keyword';
+interface Props extends SectionProps { lines?: string[]; script?: string; kicker?: boolean; keyword?: string; keywordVariant?: 'highlighter' | 'underline' | 'fill' }
+const { eyebrow = `${SITE.category} in ${SITE.city}, ${SITE.region}`, lines = ['Cold drafts.', 'Loud games.', 'Good people.'], script = 'open late every night', line = 'Forty taps, the game on every screen and a kitchen that stays open until close.', proof, primary = { label: 'See what is on tonight', href: '/events' }, secondary = { label: 'Get directions', href: '/contact' }, kicker = true, keyword, keywordVariant = 'fill', id } = Astro.props;
+const Tag = kicker ? 'p' : 'h1';
+// the keyword is matched against the whole headline; the line that holds it gets the moment
+const joined = lines.join(' ');
+const kw = keyword ?? pickKeyword(joined, [SITE.city, ...SITE.category.split(/\s+/), 'drafts', 'games', 'people']);
+const kwLine = kw ? lines.findIndex((l) => l.toLowerCase().includes(kw.toLowerCase())) : -1;
+---
+<section class="hero hero-kinetic ground-deep on-dark" id={id}>
+  <div class="wrap hero-inner">
+    <div class="hero-head">
+      {kicker ? <h1 class="crumb">{eyebrow}</h1> : <span class="eyebrow">{eyebrow}</span>}
+      <div class="hero-type">
+        <Tag class="h1 xl kinetic-h1" data-keyword={kw || undefined}>
+          {lines.map((l, i) => i === kwLine
+            ? <span class="ln"><KeywordHeadline text={l} keyword={kw} variant={keywordVariant} as="span" class="" /></span>
+            : <span class="ln">{l}</span>)}
+        </Tag>
+        <div class="hero-script"><ScriptAccent text={script} arrow="down" rotate={-8} /></div>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p class="lede">{line}</p>
+      <div class="stack">
+        <Proof text={proof} />
+        <Actions primary={primary} secondary={secondary} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--s-9) + 40px) 0 var(--s-8); }
+  .hero-inner { width: 100%; display: flex; flex-direction: column; gap: var(--s-7); }
+  .hero-head { display: flex; flex-direction: column; gap: var(--s-5); }
+  .hero-type { position: relative; display: flex; align-items: flex-start; gap: var(--s-6); }
+  .kinetic-h1 .ln { display: block; }
+  .kinetic-h1 :global(.fx-kwh) { display: inline; }
+  .hero-script { padding-top: 0.6em; }
+  .hero-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-6); align-items: end; }
+  .hero-foot .stack { gap: var(--s-4); align-items: flex-start; }
+  @media (max-width: 900px) {
+    .hero { padding-top: calc(var(--s-8) + 48px); }
+    .hero-type { flex-direction: column; align-items: center; gap: var(--s-3); }
+    .hero-script { padding-top: 0; }
+    .hero-foot { grid-template-columns: 1fr; }
+    .hero-foot .stack { align-items: center; }
+  }
+</style>
