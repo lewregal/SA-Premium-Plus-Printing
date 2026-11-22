@@ -5,7 +5,7 @@ selling websites through the shop (Lou, 2026-11-22).
 
 - Production domain: not confirmed yet. `https://sapremiumplusprinting.com` is a provisional placeholder in
   `astro.config.mjs` and `src/data/site.ts`; change both when Raymond confirms.
-- Vercel preview URL: [record here once the project is connected]. Push to `main` deploys.
+- Vercel: project `sa-premium-plus-printing` in team Rigal Media Clients (team_aagKt6Kz9xmnKPtS404Icmot). Preview https://sa-premium-plus-printing.vercel.app (Vercel Authentication on; the Vercel MCP can fetch it). Push to `main` deploys.
 - Client id `sa-premium-plus-printing`. Booking ON (label "Book a call"), Front Desk ON (`src/site.config.ts`).
   Both stay silent or fall back to the call button until the client rows exist in the Booking and Front Desk services.
 - Design: mockup C, poster wall (Lou picked 2026-11-22). Type preset screamer with Permanent Marker as the accent.
