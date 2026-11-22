@@ -1,7 +1,7 @@
 ---
 // Marquee: a looping row of words or logos (translateX only, plain CSS, no GSAP). It sits directly below the hero
 // in its own band (src/sections/marquee/MarqueeBand.astro), never inside the hero (Lou, 2026-11-07). It moves past
-// 5 seconds on its own, so it ships a visible pause button (WCAG 2.2.2) and pauses on hover and focus. Reduced
+// 5 seconds on its own. No pause button (Lou, 2026-11-22); it still stops on hover and focus. Reduced
 // motion or no JS: a static, wrapping row. Never put information only here.
 interface Props { items: string[]; speed?: number; class?: string }
 const { items, speed = 40, class: cls = '' } = Astro.props;
@@ -12,19 +12,8 @@ const list = [...items, ...items];
     <ul>{list.map((t) => <li>{t}</li>)}</ul>
   </div>
   <ul class="fx-marquee-static sr-only">{items.map((t) => <li>{t}</li>)}</ul>
-  <button class="fx-marquee-pause" type="button" aria-pressed="false" data-marquee-pause><span class="sr-only">Pause scrolling text</span><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="2" width="3.5" height="10" rx="1" fill="currentColor"/><rect x="8.5" y="2" width="3.5" height="10" rx="1" fill="currentColor"/></svg></button>
 </div>
 
-<script>
-  document.querySelectorAll<HTMLElement>('[data-fx="marquee"]').forEach((m) => {
-    const btn = m.querySelector<HTMLButtonElement>('[data-marquee-pause]');
-    btn?.addEventListener('click', () => {
-      const paused = m.classList.toggle('is-paused');
-      btn.setAttribute('aria-pressed', String(paused));
-      btn.querySelector('.sr-only')!.textContent = paused ? 'Resume scrolling text' : 'Pause scrolling text';
-    });
-  });
-</script>
 
 <style>
   .fx-marquee { position: relative; overflow: hidden; padding: 18px 0; border-top: 1px solid rgb(255 255 255 / 0.14); }
@@ -32,11 +21,9 @@ const list = [...items, ...items];
   .fx-marquee ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .fx-marquee li { display: flex; align-items: center; gap: 28px; padding-right: 28px; white-space: nowrap; font-family: var(--f-display); font-weight: var(--w-heading); font-size: clamp(1rem, 0.9rem + 0.6vw, 1.35rem); letter-spacing: 0.06em; text-transform: uppercase; }
   .fx-marquee li::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  .fx-marquee-pause { position: absolute; right: 10px; top: 50%; translate: 0 -50%; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid currentColor; background: var(--deep); color: #fff; cursor: pointer; opacity: 0.8; }
-  .fx-marquee-pause:hover, .fx-marquee-pause:focus-visible { opacity: 1; }
   @media (prefers-reduced-motion: no-preference) {
     :global(html.motion) .fx-marquee-track { animation: fx-mq var(--speed) linear infinite; }
-    :global(html.motion) .fx-marquee:hover .fx-marquee-track, :global(html.motion) .fx-marquee:focus-within .fx-marquee-track, :global(html.motion) .fx-marquee.is-paused .fx-marquee-track { animation-play-state: paused; }
+    :global(html.motion) .fx-marquee:hover .fx-marquee-track, :global(html.motion) .fx-marquee:focus-within .fx-marquee-track { animation-play-state: paused; }
   }
   @keyframes fx-mq { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) {
@@ -44,6 +31,5 @@ const list = [...items, ...items];
     .fx-marquee-track ul { flex-wrap: wrap; justify-content: center; row-gap: 8px; }
     .fx-marquee-track li:nth-child(n + 1) { display: none; }
     .fx-marquee-track li:nth-child(-n + 6) { display: flex; }
-    .fx-marquee-pause { display: none; }
-  }
+    }
 </style>
