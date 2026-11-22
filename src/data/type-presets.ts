@@ -34,6 +34,8 @@ export interface TypePreset {
 
 const caveat: FaceSpec & { kind: 'script' } = { kind: 'script', provider: 'google', name: 'Caveat', weights: ['400 700'], styles: ['normal'], fallbacks: ['cursive'] };
 
+// SA Premium: Permanent Marker replaces Caveat as the screamer accent (tape labels, Lou 2026-11-22).
+const marker: FaceSpec & { kind: 'script' } = { kind: 'script', provider: 'google', name: 'Permanent Marker', weights: [400], styles: ['normal'], fallbacks: ['cursive'] };
 export const TYPE_PRESETS: Record<string, TypePreset> = {
   plex: {
     id: 'plex', n: 4, label: 'Plex',
@@ -53,7 +55,7 @@ export const TYPE_PRESETS: Record<string, TypePreset> = {
     id: 'screamer', n: 12, label: 'Screamer',
     display: { provider: 'google', name: 'Sofia Sans Extra Condensed', weights: ['1 1000'], styles: ['normal'], fallbacks: ['Arial Narrow', 'Impact', 'sans-serif'] },
     body: { provider: 'google', name: 'Sofia Sans', weights: ['1 1000'], fallbacks: ['system-ui', 'sans-serif'] },
-    accent: caveat,
+    accent: marker,
     relationship: 'One superfamily squeezed and released: extra condensed capitals up top, the same drawing at full width below.',
   },
 };

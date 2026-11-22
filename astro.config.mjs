@@ -41,40 +41,14 @@ const HOUSE = [
   face(preset.accent || { provider: 'google', name: 'Caveat', weights: ['400 700'], styles: ['normal'], fallbacks: ['cursive'] }, '--font-accent'),
 ];
 
-// ---------- TYPE SPECIMEN ----------
-// Every family /type renders (src/data/type-specimen.ts names which card uses which). These are downloaded at
-// build time and sit in the output, but a page only loads the ones its <Font /> components name, so they cost
-// nothing on client pages. A client build deletes this list and src/pages/type.astro together.
-const SPECIMEN = [
-  // Fontshare
-  { provider: fontshare, name: 'Switzer', cssVariable: '--font-switzer', weights: ['100 900'] },
-  { provider: fontshare, name: 'Satoshi', cssVariable: '--font-satoshi', weights: ['300 900'] },
-  { provider: fontshare, name: 'Boska', cssVariable: '--font-boska', weights: ['200 900'], fallbacks: ['serif'] },
-  // Google
-  { provider: google, name: 'Instrument Serif', cssVariable: '--font-instrument-serif', weights: [400], fallbacks: ['serif'] },
-  { provider: google, name: 'IBM Plex Sans', cssVariable: '--font-plex-sans', weights: [400, 500, 600] },
-  { provider: google, name: 'IBM Plex Mono', cssVariable: '--font-plex-mono', weights: [400, 500], styles: ['normal'], fallbacks: ['monospace'] },
-  { provider: google, name: 'Fragment Mono', cssVariable: '--font-fragment-mono', weights: [400], styles: ['normal'], fallbacks: ['monospace'] },
-  { provider: google, name: 'Archivo', cssVariable: '--font-archivo', weights: ['100 900'], options: ax({ wdth: [[100, 125]] }) },
-  { provider: google, name: 'Big Shoulders', cssVariable: '--font-big-shoulders', weights: ['100 900'], styles: ['normal'], options: ax({ opsz: [[10, 72]] }), fallbacks: ['Arial Narrow', 'sans-serif'] },
-  { provider: google, name: 'Host Grotesk', cssVariable: '--font-host-grotesk', weights: ['300 800'] },
-  { provider: google, name: 'Anton', cssVariable: '--font-anton', weights: [400], styles: ['normal'], fallbacks: ['Impact', 'sans-serif'] },
-  { provider: google, name: 'Albert Sans', cssVariable: '--font-albert-sans', weights: ['100 900'] },
-  { provider: google, name: 'Atkinson Hyperlegible Next', cssVariable: '--font-atkinson', weights: ['200 800'] },
-  { provider: google, name: 'Fraunces', cssVariable: '--font-fraunces', weights: ['100 900'], options: ax({ opsz: [[9, 144]], SOFT: [50], WONK: [1] }), fallbacks: ['serif'] },
-  { provider: google, name: 'Funnel Sans', cssVariable: '--font-funnel-sans', weights: ['300 800'] },
-  { provider: google, name: 'Sofia Sans Extra Condensed', cssVariable: '--font-sofia-xc', weights: ['1 1000'], styles: ['normal'], fallbacks: ['Arial Narrow', 'sans-serif'] },
-  { provider: google, name: 'Sofia Sans', cssVariable: '--font-sofia-sans', weights: ['1 1000'] },
-];
-
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://sapremiumplusprinting.com' /* provisional until Raymond confirms the domain */,
   trailingSlash: 'never',
   build: { format: 'file' },
   output: 'static',
   // The /book route (src/pages/book/[...path].astro) renders on request through the adapter; everything else stays static.
   adapter: vercel(),
   compressHTML: true,
-  fonts: [...HOUSE, ...SPECIMEN],
-  integrations: [sitemap({ filter: (page) => !/\/(thank-you|404|kit|type|book|launch)/.test(page.replace(/\/$/, '')) })],
+  fonts: HOUSE,
+  integrations: [sitemap({ filter: (page) => !/\/(thank-you|404|book)/.test(page.replace(/\/$/, '')) })],
 });

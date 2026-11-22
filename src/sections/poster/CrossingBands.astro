@@ -1,0 +1,43 @@
+---
+// Marquee / CrossingBands. Harvest candidate from SA Premium Plus Printing (Nov 2026). The marquee band directly
+// below the hero: two tilted caution tape rows crossing, the top one solid green, the lower one outlined, moving in
+// opposite directions (translateX only, CSS). One pause button stops both (WCAG 2.2.2); hover and focus pause too.
+// Reduced motion: both rows sit still. The words are also listed once for screen readers.
+// Fingerprint: layout row-strip, headline none, density low, background deep-plain, effect marquee, mood bold.
+interface Props { top: string[]; bottom: string[]; label?: string }
+const { top, bottom, label = 'What we print' } = Astro.props;
+const twice = (a: string[]) => [...a, ...a, ...a, ...a].slice(0, Math.max(12, a.length * 2));
+---
+<section class="xbands" aria-label={label} data-xbands>
+  <ul class="sr-only">{top.map((t) => <li>{t}</li>)}</ul>
+  <div class="xb a" aria-hidden="true"><div class="in">{[...twice(top), ...twice(top)].map((t) => <><span>{t}</span><svg><use href="#i-burst"/></svg></>)}</div></div>
+  <div class="xb b" aria-hidden="true"><div class="in">{[...twice(bottom), ...twice(bottom)].map((t) => <><span>{t}</span><svg><use href="#i-star"/></svg></>)}</div></div>
+  <button class="xb-pause" type="button" aria-pressed="false" data-xb-pause><span class="sr-only">Pause scrolling text</span><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="2" width="3.5" height="10" rx="1" fill="currentColor"/><rect x="8.5" y="2" width="3.5" height="10" rx="1" fill="currentColor"/></svg></button>
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-xbands]').forEach((s) => {
+    const b = s.querySelector<HTMLButtonElement>('[data-xb-pause]');
+    b?.addEventListener('click', () => {
+      const p = s.classList.toggle('is-paused');
+      b.setAttribute('aria-pressed', String(p));
+      b.querySelector('.sr-only')!.textContent = p ? 'Resume scrolling text' : 'Pause scrolling text';
+    });
+  });
+</script>
+<style>
+  .xbands { position: relative; height: 190px; overflow: hidden; background: var(--deep); }
+  .xb { position: absolute; left: -5%; width: 110%; overflow: hidden; }
+  .xb .in { display: flex; gap: 36px; width: max-content; padding: 14px 0; align-items: center; font-family: var(--f-display); font-weight: 900; font-size: 40px; line-height: 1; text-transform: uppercase; white-space: nowrap; }
+  .xb .in svg { width: 24px; height: 24px; flex: none; }
+  .xb.a { top: 30px; background: var(--accent); color: var(--accent-ink); rotate: -3deg; }
+  .xb.b { top: 92px; background: var(--deep); border-block: 2px solid var(--accent); color: var(--accent); rotate: 2deg; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.motion) .xb .in { animation: xb-mq 34s linear infinite; }
+    :global(html.motion) .xb.b .in { animation-direction: reverse; }
+    :global(html.motion) .xbands:hover .in, :global(html.motion) .xbands:focus-within .in, :global(html.motion) .xbands.is-paused .in { animation-play-state: paused; }
+  }
+  @keyframes xb-mq { to { transform: translateX(-50%); } }
+  .xb-pause { position: absolute; right: 12px; bottom: 10px; z-index: 2; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--accent); background: var(--deep); color: var(--accent); cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .xb-pause { display: none; } }
+  @media (max-width: 600px) { .xbands { height: 150px; } .xb .in { font-size: 30px; } .xb.b { top: 78px; } .xb-pause { bottom: 4px; right: 8px; } }
+</style>

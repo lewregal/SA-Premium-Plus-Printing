@@ -18,7 +18,7 @@ const path = Astro.params.path ?? '';
 if (!PATHS.includes(path)) return Astro.redirect('/book');
 
 let html = '';
-let title = path === 'confirmed' ? 'Booked' : path === 'cancel' ? 'Cancel a booking' : 'Book online';
+let title = path === 'confirmed' ? 'Booked' : path === 'cancel' ? 'Cancel a booking' : 'Book a call';
 if (CONFIG.booking.enabled) {
   const url = new URL(path ? `${SERVICE}/${path}` : SERVICE);
   Astro.url.searchParams.forEach((v, k) => url.searchParams.set(k, v));
@@ -47,12 +47,12 @@ if (CONFIG.booking.enabled) {
 }
 Astro.response.headers.set('cache-control', 'no-store');
 ---
-<Base title={`${title} | ${SITE.short}`} description={`Book a visit with ${SITE.short} online.`} path="/book" noindex={!CONFIG.booking.enabled}>
+<Base title={`${title} | ${SITE.short}`} description={`Book a call with ${SITE.short} in ${SITE.city}: pick a time that works and we call you.`} path="/book" noindex={!CONFIG.booking.enabled}>
   <section class="sec ground-paper booking">
     {html ? <div class="wrap" style="max-width: 760px"><Fragment set:html={html} /></div> : (
       <div class="wrap stack" style="max-width: 760px; align-items: center; text-align: center">
-        <span class="eyebrow pill">Online booking</span>
-        <h1 class="h1">Online booking is almost ready</h1>
+        <span class="eyebrow pill">Book a call</span>
+        <h1 class="h1">Call booking is almost ready</h1>
         <p class="lede">Until then, call and we will set up a time.</p>
         <div class="btnrow" style="justify-content: center"><a class="btn btn-primary" href={`tel:${SITE.phoneE164}`}>Call {SITE.phone}</a></div>
       </div>

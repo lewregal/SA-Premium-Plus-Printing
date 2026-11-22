@@ -1,28 +1,45 @@
 ---
-// Minimal composed sample page: the reference home order from rigal-web-design (Hero, marquee band directly below it,
-// trust, services, story, reviews, areas, FAQ, Wash CTA). Swap variants by changing the imports; every section reads
-// from site.ts and props. The hero renders complete at first paint with one CSS keyword moment; GSAP loads lazily
-// for the sections below it.
+// Home: mockup C, the poster wall (Lou picked it 2026-11-22). Hero, crossing bands directly below it, the GBP
+// category index, the Instagram wall, Websites, reviews, the closing poster. Hero is CSS only; GSAP below it.
 import Base from '../layouts/Base.astro';
-import SplitPhoto from '../sections/hero/SplitPhoto.astro';
-import TrustLine from '../sections/trust/TrustLine.astro';
-import CardGrid from '../sections/paper/CardGrid.astro';
-import Narrative from '../sections/mark/Narrative.astro';
-import ReviewGrid from '../sections/reviews/ReviewGrid.astro';
-import AreaChips from '../sections/areas/AreaChips.astro';
-import Faq from '../sections/faq/Faq.astro';
-import WashCta from '../sections/cta/WashCta.astro';
-import MarqueeBand from '../sections/marquee/MarqueeBand.astro';
+import PosterHero from '../sections/poster/PosterHero.astro';
+import CrossingBands from '../sections/poster/CrossingBands.astro';
+import IndexList from '../sections/poster/IndexList.astro';
+import PolaroidWall from '../sections/poster/PolaroidWall.astro';
+import ArchFeature from '../sections/poster/ArchFeature.astro';
+import BigRating from '../sections/poster/BigRating.astro';
+import PosterCta from '../sections/poster/PosterCta.astro';
 import { SITE } from '../data/site';
+import { CATEGORIES, WEBSITES } from '../data/categories';
+const call = { label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` };
+const rows = [...CATEGORIES.map((c) => ({ href: `/${c.slug}`, label: c.label, text: c.blurb, img: c.img })), { href: '/websites', label: WEBSITES.label, text: WEBSITES.blurb, web: true }];
 ---
-<Base title={`${SITE.category} in ${SITE.city}, ${SITE.region} | ${SITE.short}`} description={`${SITE.short} is a ${SITE.category.toLowerCase()} serving ${SITE.city} and nearby towns. Call ${SITE.phone} for a written estimate.`} path="/">
-  <SplitPhoto />
-  <MarqueeBand items={['Roof repair', 'Replacement', 'Storm inspection', 'Gutters', 'Metal roofing']} />
-  <TrustLine />
-  <CardGrid />
-  <Narrative />
-  <ReviewGrid />
-  <AreaChips />
-  <Faq />
-  <WashCta />
+<Base title="Screen Printing in San Antonio, TX | SA Premium Plus Printing" description={`Custom T-shirts, screen printing, DTF transfers, stickers and signs at 4135 Stahl Rd, San Antonio. Call ${SITE.phone} or book a call.`} path="/" overlayHeader>
+  <link slot="head" rel="preload" as="image" href="/images/work/press.webp" fetchpriority="high">
+  <PosterHero
+    kicker={`Screen printing in ${SITE.city}, ${SITE.region}`}
+    solid="You think it." before="We " keyword="print" after=" it."
+    sub="Custom shirts, DTF transfers, stickers and signs from the shop on Stahl Road. Bring the idea, leave with the merch."
+    image="/images/work/press.webp"
+    labels={[
+      { text: 'Screen printing', pos: 'left:7%;top:30%;rotate:-8deg' },
+      { text: 'DTF transfers', pink: true, pos: 'right:8%;top:26%;rotate:6deg' },
+      { text: 'Stickers', pos: 'left:11%;bottom:22%;rotate:5deg' },
+      { text: 'Signs and banners', pos: 'right:10%;bottom:26%;rotate:-5deg' },
+    ]}
+    secondary={call}
+  />
+  <CrossingBands top={['Screen printing', 'Custom T-shirts', 'DTF', 'Stickers', 'Signs', 'Websites']} bottom={["Let's print it", 'Stahl Road, San Antonio']} />
+  <IndexList lines={['What we print', 'and build']} note="Pick one, we'll price it" rows={rows} />
+  <PolaroidWall headline="Off the press" shots={[
+    { src: '/images/work/press.webp', alt: 'Screen printing press with fresh prints', caption: 'Fresh run', r: '-3deg' },
+    { src: '/images/work/stickers.webp', alt: 'A pile of colorful stickers', caption: 'Sticker drop', r: '2deg', drop: '40px' },
+    { src: '/images/work/rack.webp', alt: 'Shirts on a rack', caption: 'Merch day', r: '-1.5deg' },
+    { src: '/images/work/squeegees.webp', alt: 'Squeegees hanging on a wall', caption: 'Ink ready', r: '3deg', drop: '30px' },
+  ]} />
+  <ArchFeature pill="Websites" lead="Shirts on your crew." scribble="Your shop on Google." image="/images/work/laptop.webp" imageAlt="Laptop open on a desk" tape="New"
+    points={['A fast, mobile first website built from scratch for your business', 'Matched to your Google Business Profile, so Google and AI tools read one clear business', 'Order it at the same counter where you order your shirts']}
+    primary={{ label: 'See websites', href: '/websites' }} />
+  <BigRating />
+  <PosterCta tape="Got an idea?" text="Let's print it" secondary={{ label: 'DM us on Instagram', href: SITE.instagram.dm }} />
 </Base>

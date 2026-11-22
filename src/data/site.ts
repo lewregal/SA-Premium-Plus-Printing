@@ -1,38 +1,48 @@
-// Business facts. Every value here is a placeholder; a client build replaces all of them from the GBP,
-// character for character (name, address, phone, hours). Nothing in a section hardcodes these.
+// Business facts for SA Premium Plus Printing, from the Google Business Profile (read 2026-11-11 and 2026-11-20)
+// and confirmed by Lou (phone, 2026-11-22). Name, address, phone and hours match the profile character for character.
+// Open items (ask Raymond): the domain, the inbox for form messages, the full GBP services list, prices.
 export const SITE = {
-  name: 'Sample Roofing Co',          // legal or GBP name
-  short: 'Sample Roofing',            // header and footer wordmark
-  category: 'Roofing Contractor',     // GBP primary category, drives the kicker H1
-  logo: '',                           // optional: the client's logo under public/ (e.g. '/images/brand/logo-512.png'). '' shows the wordmark
+  name: 'SA Premium Plus Printing',
+  short: 'SA Premium',
+  category: 'Screen printing shop',   // GBP primary category
+  logo: '/images/brand/logo-green.png',
   city: 'San Antonio',
   region: 'TX',
-  domain: 'https://example.com',
-  phone: '(210) 555 0100',
-  phoneE164: '+12105550100',
-  email: 'office@example.com',
-  address: { street: '100 Example St', city: 'San Antonio', region: 'TX', zip: '78201' },
-  hours: { days: [1, 2, 3, 4, 5], open: '08:00', close: '17:00', tz: 'America/Chicago', text: 'Monday to Friday, 8 AM to 5 PM' },
-  placeId: '',                        // Google place id for the directions link, when known
-  googleReviews: 'https://www.google.com/maps',
-  rating: '5.0',                      // from the GBP, never typed from memory
-  reviewCount: 0,                     // 0 shows the "read our reviews" fallback instead of a count
-  booking: '/contact',                // the client's own booking link, or the contact page
-  primaryAction: { label: 'Get a free estimate', href: '/contact' },  // the fallback action when booking is off (site.config.ts)
-  areas: ['Alamo Heights', 'Stone Oak', 'Helotes', 'Boerne', 'Schertz', 'New Braunfels'],
+  domain: 'https://sapremiumplusprinting.com', // provisional until the domain is confirmed
+  phone: '(210) 999-5638',
+  phoneE164: '+12109995638',
+  email: '',                          // the shop inbox for form messages; empty hides the form
+  address: { street: '4135 Stahl Rd, Suite 6', city: 'San Antonio', region: 'TX', zip: '78217' },
+  // spans: each one is a set of weekdays (0 Sunday) with an open and close time in the shop's time zone
+  hours: {
+    days: [1, 2, 3, 4, 5], open: '11:00', close: '19:00', tz: 'America/Chicago',
+    spans: [{ days: [1, 2, 3, 4, 5], open: '11:00', close: '19:00' }, { days: [6], open: '12:00', close: '15:00' }],
+    text: 'Monday to Friday 11 AM to 7 PM, Saturday 12 PM to 3 PM',
+  },
+  placeId: 'ChIJYVSsC1uLXIYRcSSDGbqwmuI',
+  googleReviews: 'https://www.google.com/maps/place/?q=place_id:ChIJYVSsC1uLXIYRcSSDGbqwmuI',
+  rating: '4.8',
+  reviewCount: 124,
+  instagram: { handle: '@sapremiumplusprinting', href: 'https://www.instagram.com/sapremiumplusprinting/', dm: 'https://ig.me/m/sapremiumplusprinting' },
+  booking: '/book',
+  primaryAction: { label: 'Get a quote', href: '/contact' },
+  areas: [] as string[],
   nav: [
-    { label: 'Services', href: '/services' },
-    { label: 'Service areas', href: '/service-areas' },
-    { label: 'About', href: '/about' },
-    { label: 'Reviews', href: '/reviews' },
+    { label: 'Screen printing', href: '/screen-printing' },
+    { label: 'Custom T-shirts', href: '/custom-t-shirts' },
+    { label: 'Digital printing', href: '/digital-printing' },
+    { label: 'Stickers', href: '/stickers-and-labels' },
+    { label: 'Print shop', href: '/print-shop' },
+    { label: 'Signs', href: '/signs' },
+    { label: 'Websites', href: '/websites' },
     { label: 'Contact', href: '/contact' },
   ],
   locations: [
-    { name: 'Sample Roofing, San Antonio', street: '100 Example St', city: 'San Antonio, TX 78201', phone: '(210) 555 0100', tel: '+12105550100', map: '/placeholders/map.svg' },
+    { name: 'SA Premium Plus Printing', street: '4135 Stahl Rd, Suite 6', city: 'San Antonio, TX 78217', phone: '(210) 999-5638', tel: '+12109995638', map: '/placeholders/map.svg' },
   ],
-  social: [] as { label: string; href: string }[],
-  published: '2026-01-01',
-  modified: '2026-01-01',
+  social: [{ label: 'Instagram', href: 'https://www.instagram.com/sapremiumplusprinting/' }],
+  published: '2026-11-22',
+  modified: '2026-11-22',
 };
 
 export const directionsUrl = (loc = SITE.locations[0]) =>

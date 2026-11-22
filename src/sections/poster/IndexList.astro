@@ -1,0 +1,56 @@
+---
+// Poster / IndexList. Harvest candidate from SA Premium Plus Printing (Nov 2026). A numbered index of the GBP
+// categories, one row each (number, name, one line, a tilted photo, a round arrow), with one highlighted row in the
+// accent fill for the upsell. The heading is an outlined to solid fill (GSAP, below the hero only).
+// Fingerprint: layout index-rows, headline outlined-alternating, density medium, background deep-plain,
+// effect outlined-to-solid, mood bold. Best for: any business whose GBP has 4 to 8 categories.
+import OutlinedToSolid from '../../effects/OutlinedToSolid.astro';
+interface Row { href: string; label: string; text: string; img?: string; web?: boolean }
+interface Props { lines: string[]; note?: string; rows: Row[]; id?: string }
+const { lines, note, rows, id } = Astro.props;
+---
+<section class="sec idx-sec on-dark" id={id}>
+  <div class="wrap">
+    <div class="idx-top">
+      <OutlinedToSolid lines={lines} fill class="poster poster-h2" />
+      {note && <span class="tape" style="rotate:-3deg" aria-hidden="true">{note}</span>}
+    </div>
+    <ol class="idx">
+      {rows.map((r, i) => (
+        <li><a class:list={{ web: r.web }} href={r.href}>
+          <span class="n">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="poster">{r.label}</h3>
+          <p>{r.text}</p>
+          {r.web ? <span class="th th-web" aria-hidden="true"><svg><use href="#i-web"/></svg></span> : <span class="th" style={`--img:url(${r.img})`} aria-hidden="true"></span>}
+          <span class="go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+        </a></li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .idx-sec { padding: 120px 0; }
+  .idx-top { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 50px; flex-wrap: wrap; text-align: left; }
+  .idx { list-style: none; padding: 0; border-top: 2px solid var(--ink); text-align: left; }
+  .idx a { display: grid; grid-template-columns: 90px 1fr 1.1fr 150px 56px; gap: 24px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); }
+  .idx a:hover { background: var(--card); color: var(--ink); transform: translateX(10px); }
+  .idx .n { font-family: var(--f-display); font-weight: 800; font-size: 28px; color: var(--muted); }
+  .idx h3 { font-size: clamp(2.2rem, 1rem + 2.6vw, 3.6rem); line-height: 0.9; color: inherit; }
+  .idx p { color: var(--muted); font-size: 15px; }
+  .idx .th { height: 92px; border-radius: 6px; background: var(--img) center / cover; rotate: -2deg; }
+  .idx .go { width: 52px; height: 52px; border-radius: 50%; border: 2px solid currentColor; display: grid; place-items: center; }
+  .idx .go svg { width: 20px; height: 20px; }
+  .idx a.web { background: var(--accent); color: var(--accent-ink); padding-left: 18px; padding-right: 18px; border-radius: 6px; margin-top: 10px; border: 0; }
+  .idx a.web .n, .idx a.web p { color: rgb(11 11 13 / 0.78); }
+  .idx .th-web { display: grid; place-items: center; background: var(--deep); color: var(--accent); }
+  .idx .th-web svg { width: 48px; height: 48px; }
+  @media (max-width: 1000px) { .idx a { grid-template-columns: 60px 1fr 120px 52px; } .idx p { display: none; } }
+  @media (max-width: 600px) {
+    .idx-sec { padding: 80px 0; }
+    .idx-top { justify-content: center; text-align: center; }
+    .idx a { grid-template-columns: 40px 1fr 52px; gap: 14px; }
+    .idx a:hover { transform: none; }
+    .idx .th { display: none; }
+    .idx .n { font-size: 20px; }
+  }
+</style>

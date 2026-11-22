@@ -1,0 +1,38 @@
+---
+// Poster / ArchFeature. Harvest candidate from SA Premium Plus Printing (Nov 2026). An arch photo framed in the accent
+// with a tape label, beside a pill, a two part headline with a drawn scribble under the second part (GSAP DrawSVG,
+// below the hero), a short list with brand glyph bullets, and one primary action.
+// Fingerprint: layout split-right, headline bold-solid, density medium, background deep-plain, effect scribble-underline, mood bold.
+import ScribbleUnderline from '../../effects/ScribbleUnderline.astro';
+import type { Action } from '../types';
+interface Props { pill: string; lead: string; scribble: string; points: string[]; image: string; imageAlt: string; tape?: string; primary: Action; secondary?: Action; id?: string }
+const { pill, lead, scribble, points, image, imageAlt, tape, primary, secondary, id } = Astro.props;
+const glyphs = ['i-burst', 'i-flower', 'i-star', 'i-burst'];
+---
+<section class="sec arch-sec on-dark" id={id}>
+  <div class="wrap arch-grid">
+    <div class="arch-img">
+      <img src={image} alt={imageAlt} width="666" height="1000" loading="lazy" decoding="async">
+      {tape && <span class="tape" aria-hidden="true">{tape}</span>}
+    </div>
+    <div class="arch-copy">
+      <span class="eyebrow pill">{pill}</span>
+      <h2 class="poster poster-h2">{lead} <span class="g"><ScribbleUnderline text={scribble} color="var(--pink)" /></span></h2>
+      <ul class="checks">{points.map((p, i) => <li><svg aria-hidden="true"><use href={`#${glyphs[i % glyphs.length]}`}/></svg><span>{p}</span></li>)}</ul>
+      <div class="btnrow"><a class="btn btn-primary" href={primary.href}>{primary.label}</a>{secondary && <a class="btn btn-secondary" href={secondary.href}>{secondary.label}</a>}</div>
+    </div>
+  </div>
+</section>
+<style>
+  .arch-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 70px; align-items: center; }
+  .arch-img { position: relative; max-width: 500px; aspect-ratio: 4 / 5; border-radius: 999px 999px 8px 8px; border: 3px solid var(--accent); }
+  .arch-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 999px 999px 5px 5px; }
+  .arch-img .tape { position: absolute; right: -18px; top: 80px; rotate: 8deg; }
+  .arch-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; text-align: left; }
+  .arch-copy .fx-scribble, .arch-copy :global(.fx-scribble) { white-space: normal; }
+  .checks { list-style: none; padding: 0; margin: 10px 0 16px; display: grid; gap: 16px; }
+  .checks li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; color: var(--on-deep); }
+  .checks svg { width: 28px; height: 28px; color: var(--accent); }
+  @media (max-width: 1000px) { .arch-grid { grid-template-columns: 1fr; gap: 40px; } .arch-img { margin: 0 auto; width: 100%; } }
+  @media (max-width: 900px) { .arch-copy { align-items: center; text-align: center; } .checks { text-align: left; } }
+</style>

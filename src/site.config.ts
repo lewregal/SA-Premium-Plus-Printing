@@ -11,10 +11,10 @@
 //            HOUSE fonts in astro.config.mjs and the matching tokens through data-type on <html>. A matched pairing
 //            outside the shortlist is added to type-presets.ts first, then named here.
 export const CONFIG = {
-  clientId: 'sample-roofing',
-  type: 'plex' as 'plex' | 'druk' | 'screamer' | (string & {}),
-  booking: { enabled: false, label: 'Book online', service: 'https://book.rigalmedia.com' },
-  frontDesk: { enabled: false, domain: 'https://front-desk.rigalmedia.com' },
+  clientId: 'sa-premium-plus-printing',
+  type: 'screamer' as 'plex' | 'druk' | 'screamer' | (string & {}),
+  booking: { enabled: true, label: 'Book a call', service: 'https://book.rigalmedia.com' },
+  frontDesk: { enabled: true, domain: 'https://front-desk.rigalmedia.com' },
 };
 
 export const bookingAction = (fallback: { label: string; href: string }) =>

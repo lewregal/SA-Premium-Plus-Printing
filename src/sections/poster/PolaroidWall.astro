@@ -1,0 +1,35 @@
+---
+// Poster / PolaroidWall. Harvest candidate from SA Premium Plus Printing (Nov 2026). Four taped polaroids on the
+// raised ground, each slightly rotated with a marker caption, plus the Instagram button. Stock photos stand in until
+// the client's own posts arrive (then this becomes the live Instagram feed). Heading: split line reveal (GSAP).
+// Fingerprint: layout photo-row, headline bold-solid, density low, background raise-grain, effect split-line-reveal, mood playful.
+import SplitLineReveal from '../../effects/SplitLineReveal.astro';
+import { SITE } from '../../data/site';
+interface Shot { src: string; alt: string; caption: string; r: string; drop?: string }
+interface Props { headline: string; shots: Shot[]; id?: string }
+const { headline, shots, id } = Astro.props;
+---
+<section class="wall on-dark" id={id}>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="wall-top">
+      <SplitLineReveal text={headline} class="poster poster-h2" />
+      <a class="btn btn-secondary" href={SITE.instagram.href} rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#i-ig"/></svg>{SITE.instagram.handle}</a>
+    </div>
+    <ul class="wall-grid">
+      {shots.map((s) => <li class="pol" style={`--r:${s.r};margin-top:${s.drop ?? '0'}`}><img src={s.src} alt={s.alt} width="600" height="600" loading="lazy" decoding="async"><span>{s.caption}</span></li>)}
+    </ul>
+  </div>
+</section>
+<style>
+  .wall { position: relative; isolation: isolate; overflow: hidden; background: var(--card); border-block: 1px solid var(--line); padding: 100px 0 120px; }
+  .wall-top { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 50px; flex-wrap: wrap; text-align: left; }
+  .wall-grid { list-style: none; padding: 20px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  .pol { background: #f3f1ea; padding: 10px 10px 46px; rotate: var(--r); box-shadow: 0 16px 30px rgb(0 0 0 / 0.45); position: relative; transition: rotate var(--t-slow) var(--ease), transform var(--t-slow) var(--ease); }
+  .pol:hover { rotate: 0deg; transform: translateY(-6px); }
+  .pol img { aspect-ratio: 1; width: 100%; object-fit: cover; }
+  .pol span { position: absolute; left: 12px; bottom: 10px; font-family: var(--f-script); color: var(--deep); font-size: 18px; }
+  .pol::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 26px; translate: -50% 0; rotate: -4deg; background: rgb(186 213 50 / 0.85); z-index: 1; }
+  @media (max-width: 1000px) { .wall-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .wall { padding: 80px 0; } .wall-top { justify-content: center; text-align: center; } .wall-grid { gap: 22px 18px; } .pol { padding: 7px 7px 36px; margin-top: 0 !important; } .pol span { font-size: 14px; } }
+</style>

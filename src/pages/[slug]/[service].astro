@@ -1,0 +1,82 @@
+---
+// One page per service under a GBP category (GBP Core Alignment): /{category}/{service}. The service name is the
+// exact name to add to the Google profile's Services list. Kicker H1: service and city. Data: src/data/categories.ts.
+import Base from '../../layouts/Base.astro';
+import Banner from '../../sections/banner/Banner.astro';
+import Faq from '../../sections/faq/Faq.astro';
+import PosterCta from '../../sections/poster/PosterCta.astro';
+import { SITE } from '../../data/site';
+import { SERVICES, CATEGORIES } from '../../data/categories';
+export function getStaticPaths() {
+  return SERVICES.map((s) => ({ params: { slug: s.cat.slug, service: s.slug }, props: { s } }));
+}
+const { s } = Astro.props as { s: (typeof SERVICES)[number] };
+const c = s.cat;
+const parent = c.parent ? CATEGORIES.find((p) => p.slug === c.parent) : undefined;
+const crumbs = [...(parent ? [{ name: parent.label, href: `/${parent.slug}` }] : []), { name: c.label, href: `/${c.slug}` }, { name: s.name, href: `/${c.slug}/${s.slug}` }];
+const siblings = SERVICES.filter((x) => x.cat.slug === c.slug && x.slug !== s.slug);
+const kicker = `${s.name} in ${SITE.city}, ${SITE.region}`;
+const clean = s.text.replace(/\s*\[[^\]]*\]\s*/g, ' ').trim();
+const answer = `${SITE.name} handles ${s.name.toLowerCase()} at 4135 Stahl Rd, Suite 6, San Antonio. ${clean ? clean + ' ' : ''}Call ${SITE.phone}, DM ${SITE.instagram.handle} on Instagram, or book a call to get a price.`;
+const faq = c.faq;
+const url = `${SITE.domain}/${c.slug}/${s.slug}`;
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Service', name: s.name, serviceType: s.name, category: c.gbp[0], areaServed: { '@type': 'City', name: `${SITE.city}, ${SITE.region}` }, provider: { '@id': `${SITE.domain}/#business` }, url },
+    { '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+    { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: SITE.domain }, ...crumbs.map((x, i) => ({ '@type': 'ListItem', position: i + 2, name: x.name, item: `${SITE.domain}${x.href}` }))] },
+  ],
+};
+---
+<Base title={`${kicker} | ${SITE.short}`.slice(0, 60)} description={`${s.name} from ${SITE.name}, 4135 Stahl Rd, San Antonio. Call ${SITE.phone} or book a call.`} path={`/${c.slug}/${s.slug}`} overlayHeader>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <Banner crumbs={crumbs} eyebrow={kicker} headline={`${s.name}, printed in San Antonio`} keyword="San Antonio" keywordVariant="fill" line={clean || c.line} media={{ src: c.img }}
+    proof={`${SITE.rating} stars from ${SITE.reviewCount} Google reviews`} secondary={{ label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` }} />
+  <section class="sec on-dark">
+    <div class="wrap svc-grid">
+      <div class="svc-answer">
+        <h2 class="eyebrow pill">Quick answer</h2>
+        <p class="svc-a">{answer}</p>
+        {s.text.includes('[') && <p class="svc-note">{s.text.match(/\[[^\]]*\]/)?.[0]}</p>}
+      </div>
+      <div class="svc-send">
+        <h2 class="poster poster-h2">What to <span class="g">send us</span></h2>
+        <ul>
+          <li>Your logo, art or a photo of the idea</li>
+          <li>How many you need and in what sizes</li>
+          <li>The date you need them by</li>
+        </ul>
+        <div class="btnrow"><a class="btn btn-primary" href="/book">Book a call about {s.name.toLowerCase()}</a><a class="btn btn-secondary" href={SITE.instagram.dm} rel="noopener">Send it by DM</a></div>
+      </div>
+    </div>
+  </section>
+  <Faq eyebrow="Good to know" headline={`${s.name} questions`} items={faq} />
+  <section class="sec on-dark more">
+    <div class="wrap">
+      <h2 class="eyebrow pill">More {c.label.toLowerCase()}</h2>
+      <ul class="more-list">
+        {siblings.map((o) => <li><a href={`/${c.slug}/${o.slug}`}>{o.name}<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>)}
+        <li><a class="web" href={`/${c.slug}`}>All {c.label.toLowerCase()}<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+      </ul>
+    </div>
+  </section>
+  <PosterCta tape="Got an idea?" text="Let's print it" secondary={{ label: 'DM us on Instagram', href: SITE.instagram.dm }} />
+</Base>
+<style>
+  .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .svc-answer { padding: 32px; border: 2px solid var(--accent); border-radius: 8px; background: var(--card); text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .svc-answer h2 { margin: 0; }
+  .svc-a { font-size: 20px; color: var(--ink); }
+  .svc-note { color: var(--muted); font-size: 14px; }
+  .svc-send { text-align: left; display: flex; flex-direction: column; gap: 24px; }
+  .svc-send ul { padding-left: 1.2em; color: var(--on-deep); display: grid; gap: 8px; font-size: 18px; }
+  .svc-send li::marker { color: var(--accent); }
+  .more-list { list-style: none; padding: 0; margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .more-list a { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 20px; border: 2px solid var(--ink); border-radius: 4px; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: 22px; text-decoration: none; color: var(--ink); }
+  .more-list a:hover { background: var(--ink); color: var(--deep); }
+  .more-list a.web { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .more-list svg { width: 18px; height: 18px; }
+  @media (max-width: 1000px) { .svc-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .svc-send { text-align: center; align-items: center; } .svc-send ul { text-align: left; } .more-list { justify-content: center; } }
+</style>

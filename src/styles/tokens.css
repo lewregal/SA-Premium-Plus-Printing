@@ -7,19 +7,23 @@
 :root {
   /* ---------- COLOR ROLES ----------
      Swap the hex values, keep the roles. Each comment says what changes on the page. */
-  --deep: #141a21;        /* darkest ground: footer, hero scrim, mobile action bar, the Wash CTA. Never pure black; tint it with the brand. */
-  --brand: #1f3a4d;       /* brand color: headings on light grounds, dark washes, the Banner overlay. Must carry white text at 4.5:1. */
-  --accent: #c8502d;      /* the one action color: primary buttons, the highlighter bar, the drawn underline. Appears nowhere as decoration. */
-  --accent-ink: #ffffff;  /* text on the accent fill. Check 4.5:1 against --accent. */
-  --accent-soft: #f2d9cf; /* highlighter bar and soft chips on light grounds (not for text). */
-  --ink: #1d232a;         /* body text on light grounds. */
-  --muted: #566069;       /* small text, captions, eyebrow text on light grounds. At least 4.5:1 on --paper and --card. */
-  --line: rgb(29 35 42 / 0.14);  /* hairlines, card borders, dividers. */
-  --paper: #f4f1ec;       /* light ground A (page background). */
-  --card: #ffffff;        /* light ground B and card surfaces. Alternate with --paper so no two neighbors share a ground. */
-  --on-deep: #e6e2db;     /* body text on --deep and --brand grounds. */
-  --on-deep-strong: #ffffff; /* headings on dark grounds. */
-  --star: #e0a43b;        /* review stars. Decorative; never the only signal. */
+  /* SA Premium Plus Printing (Nov 2026): dark poster wall. Ink ground, white text, Logo Green highlights, Bubblegum
+     only as the offset shadow and tape. Every page is a dark ground, so the light roles hold dark values too. */
+  --deep: #0B0B0D;        /* Ink: page, footer, action bar */
+  --brand: #151619;       /* raised dark: banner wash, cards on hover */
+  --accent: #BAD532;      /* Logo Green: primary buttons, keyword fill, highlights */
+  --accent-ink: #0B0B0D;  /* text on green: 11.9:1 */
+  --accent-soft: rgb(186 213 50 / 0.28);
+  --ink: #F4F5EF;         /* body text on Ink: 18:1 */
+  --muted: #A9ACA3;       /* small text on Ink and raise: over 7:1 */
+  --line: #2A2C31;
+  --paper: #0B0B0D;       /* ground A */
+  --card: #151619;        /* ground B */
+  --on-deep: #D8DAD2;
+  --on-deep-strong: #F4F5EF;
+  --star: #BAD532;
+  --pink: #FF4FA8;        /* Bubblegum: offset shadow and the odd tape label, never text on Ink */
+  --lime: #A1D94E;
 
   /* ---------- TYPE ----------
      Faces load through Astro's built in fonts feature (the `fonts` list in astro.config.mjs, built from the type
@@ -63,11 +67,11 @@
   /* ---------- SHAPE ----------
      Clickable things and containers get different shapes so the shape says what is clickable.
      Trades and auto: hard corners. Care, spa, food: soft. */
-  --r-btn: 6px;           /* buttons */
-  --r-card: 16px;         /* cards and panels */
-  --r-media: 20px;        /* photo frames */
+  --r-btn: 4px;           /* buttons */
+  --r-card: 8px;         /* cards and panels */
+  --r-media: 8px;        /* photo frames */
   --r-pill: 999px;        /* eyebrows, chips, nav pills */
-  --shadow-1: 0 24px 48px -28px rgb(20 26 33 / 0.45);  /* the one shadow budgeted per page */
+  --shadow-1: 0 16px 30px rgb(0 0 0 / 0.45);  /* the one shadow budgeted per page */
 
   /* ---------- SPACING ----------
      8px scale. Sections breathe: desktop 96 to 128, phone 64 to 80. */
@@ -83,7 +87,7 @@
   --s-10: 8rem;
   --sec-y: clamp(4rem, 2.5rem + 6vw, 7.5rem);   /* section padding: 64px to 120px */
   --sec-y-tight: clamp(3rem, 2rem + 4vw, 5.5rem); /* 48px to 88px */
-  --container: 1200px;
+  --container: 1320px;
   --gutter: clamp(1rem, 0.5rem + 2vw, 2.5rem);
 
   /* ---------- TEXTURE ----------
@@ -110,7 +114,7 @@
      keyword-highlighter | keyword-underline | keyword-fill. Effects below the hero are picked per section:
      split-line-reveal | word-stagger | mask-reveal | scribble-underline | highlighter-bar | outlined-to-solid |
      scramble-text | weight-shift | marquee | counter-roll | script-accent | gradient-sweep */
-  --fx-hero: 'keyword-highlighter';
+  --fx-hero: 'keyword-fill';
 }
 
 /* ---------- TYPE PRESET OVERRIDES ----------

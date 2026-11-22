@@ -1,0 +1,55 @@
+---
+// Poster / PosterHero. Harvest candidate from SA Premium Plus Printing (Nov 2026).
+// The client's own tagline as a giant two line poster: a solid line over an outlined line, centered over a darkened
+// shop photo with a halftone dot band and grain, taped marker labels in the corners (decorative, aria-hidden).
+// Renders complete at first paint; the one motion moment is the CSS Keyword fill on the service word.
+// Fingerprint: layout centered-column, headline outlined-alternating, density low, background photo-dark-halftone,
+// effect keyword-fill, mood bold. Best for: print shops, apparel, tattoo, bars with a slogan.
+import Keyword from '../../effects/Keyword.astro';
+import Actions from '../../components/Actions.astro';
+import { SITE } from '../../data/site';
+import type { Action } from '../types';
+interface Props { kicker: string; solid: string; before: string; keyword: string; after: string; sub: string; labels?: { text: string; pink?: boolean; pos: string }[]; primary?: Action; secondary?: Action; image: string }
+const { kicker, solid, before, keyword, after, sub, labels = [], primary, secondary, image } = Astro.props;
+---
+<section class="phero on-dark" style={`--img:url(${image})`}>
+  <div class="phero-bg" aria-hidden="true"></div><div class="phero-dots" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div>
+  <div class="phero-labels" aria-hidden="true">
+    {labels.map((l) => <span class:list={['tape', { pink: l.pink }]} style={l.pos}>{l.text}</span>)}
+  </div>
+  <div class="wrap phero-in">
+    <h1 class="crumb">{kicker}</h1>
+    <p class="poster phero-mega">{solid}<span class="ol">{before}<Keyword text={keyword} variant="fill" />{after}</span></p>
+    <p class="phero-sub">{sub}</p>
+    <Actions primary={primary} secondary={secondary} class="phero-btns" />
+    <p class="phero-proof"><b>{SITE.rating}</b><span class="stars" aria-hidden="true">{[1,2,3,4,5].map(() => <svg><use href="#i-star"/></svg>)}</span><a href={SITE.googleReviews} rel="noopener">{SITE.reviewCount} Google reviews</a></p>
+  </div>
+</section>
+<style>
+  .phero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; isolation: isolate; padding: 120px 0 64px; }
+  .phero-bg { position: absolute; inset: 0; z-index: -2; background: var(--img) center 40% / cover; filter: grayscale(0.2); }
+  .phero-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 50%, rgb(11 11 13 / 0.74), rgb(11 11 13 / 0.92)), linear-gradient(rgb(11 11 13 / 0.2), var(--deep)); }
+  .phero-dots { position: absolute; inset: 0; z-index: -1; background: radial-gradient(rgb(186 213 50 / 0.22) 1.4px, transparent 1.6px) 0 0 / 16px 16px; -webkit-mask: linear-gradient(115deg, transparent 30%, #000 60%, transparent 90%); mask: linear-gradient(115deg, transparent 30%, #000 60%, transparent 90%); }
+  .phero-in { display: flex; flex-direction: column; align-items: center; }
+  .phero .crumb { align-self: center; margin-bottom: 26px; }
+  .phero-mega { font-size: clamp(4.4rem, 1rem + 12vw, 13.5rem); line-height: 0.8; }
+  .phero-mega .ol { display: block; -webkit-text-stroke-width: 2px; }
+  .phero-mega :global(.fx-kw) { -webkit-text-stroke: 0; --kw: var(--accent); --kw-base: var(--ink); }
+  .phero-sub { max-width: 54ch; margin: 30px auto 0; color: var(--on-deep); font-size: 19px; }
+  .phero :global(.phero-btns) { justify-content: center; margin-top: 30px; }
+  .phero-proof { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; font-size: 14px; color: var(--on-deep); }
+  .phero-proof b { font-family: var(--f-display); font-size: 34px; line-height: 1; color: var(--accent); }
+  .phero-proof a { color: var(--on-deep); text-decoration: underline; text-underline-offset: 3px; }
+  .stars { display: inline-flex; gap: 2px; color: var(--accent); }
+  .stars svg { width: 15px; height: 15px; }
+  .phero-labels { position: absolute; inset: 0; pointer-events: none; }
+  .phero-labels .tape { position: absolute; }
+  @media (max-width: 1000px) { .phero-labels { display: none; } }
+  @media (max-width: 600px) {
+    .phero { padding: 100px 0 40px; }
+    .phero-mega { font-size: clamp(3.2rem, 18vw, 5rem); }
+    .phero .crumb { margin-bottom: 18px; }
+    .phero-sub { font-size: 16px; margin-top: 22px; }
+    .phero :global(.phero-btns) { flex-direction: column; align-items: stretch; width: 100%; }
+  }
+</style>

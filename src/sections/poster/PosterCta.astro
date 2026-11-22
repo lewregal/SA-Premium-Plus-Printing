@@ -1,0 +1,28 @@
+---
+// Poster / PosterCta. Harvest candidate from SA Premium Plus Printing (Nov 2026). The closing poster: a tape label,
+// a giant line with the accent word, words staggering in (GSAP, below the hero), over a faint grayscale shop photo.
+// The primary is the booking slot. Fingerprint: layout centered-column, headline bold-solid, density low,
+// background photo-faint, effect word-stagger, mood bold.
+import WordStagger from '../../effects/WordStagger.astro';
+import Actions from '../../components/Actions.astro';
+import type { Action } from '../types';
+interface Props { tape?: string; text: string; sub?: string; image?: string; primary?: Action; secondary?: Action; id?: string }
+const { tape, text, sub, image = '/images/work/squeegees.webp', primary, secondary, id } = Astro.props;
+---
+<section class="pcta on-dark" id={id} style={`--img:url(${image})`}>
+  <div class="wrap pcta-in">
+    {tape && <span class="tape" style="rotate:-4deg" aria-hidden="true">{tape}</span>}
+    <WordStagger text={text} as="h2" class="poster pcta-mega" />
+    {sub && <p class="pcta-sub">{sub}</p>}
+    <Actions primary={primary} secondary={secondary} class="pcta-btns" />
+  </div>
+</section>
+<style>
+  .pcta { position: relative; text-align: center; padding: 150px 0; overflow: hidden; isolation: isolate; }
+  .pcta::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--img) center / cover; opacity: 0.14; filter: grayscale(1); }
+  .pcta-in { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .pcta :global(.pcta-mega) { font-size: clamp(4.4rem, 1rem + 11vw, 12rem); line-height: 0.82; }
+  .pcta-sub { color: var(--on-deep); max-width: 52ch; font-size: 18px; }
+  .pcta :global(.pcta-btns) { justify-content: center; margin-top: 12px; }
+  @media (max-width: 600px) { .pcta { padding: 100px 0; } .pcta :global(.pcta-mega) { font-size: clamp(3.6rem, 17vw, 5rem); } }
+</style>

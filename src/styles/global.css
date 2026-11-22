@@ -126,7 +126,7 @@ p, h1, h2, h3, h4, ul, ol, figure, blockquote, dl, dd { margin: 0; }
 /* Rigal Front Desk launcher: the widget mounts bottom right. Nothing of ours may sit in that corner, and on phones
    the launcher is lifted above the action bar (the widget reads this custom property when present). */
 :root { --fd-offset-bottom: 16px; --fd-offset-right: 16px; }
-@media (max-width: 1100px) { :root { --fd-offset-bottom: calc(96px + env(safe-area-inset-bottom)); } }
+@media (max-width: 1280px) { :root { --fd-offset-bottom: calc(96px + env(safe-area-inset-bottom)); } }
 
 /* sitewide grain: a faint tooth over everything, never over 4% opacity */
 html::after { content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: var(--tx-grain-opacity); background-image: var(--tx-grain); background-size: 180px 180px; }
@@ -163,3 +163,30 @@ html.motion .fx-gsap.fx-inline.is-armed:not(.is-done) > .fx-anim { display: inli
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   .btn:hover, .card:hover, .chips a:hover { transform: none; }
 }
+
+/* ---------- SA Premium: dark poster theme ----------
+   Every ground is Ink or raised Ink, so headings and links read in the light roles. Buttons get the
+   Bubblegum offset shadow from the mockup; the tape label is the Permanent Marker accent. */
+html { background: var(--deep); overflow-x: clip; }
+body { overflow-x: clip; }
+.h1, .h2, .h3 { color: var(--ink); }
+a { color: var(--ink); }
+a:hover { color: var(--accent); }
+.btn { text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; border-radius: var(--r-btn); }
+.btn-primary { box-shadow: 5px 5px 0 var(--pink); --fill: var(--ink); }
+.btn-primary:hover { color: var(--deep); box-shadow: 3px 3px 0 var(--pink); }
+.btn-secondary { color: var(--ink); border: 2px solid var(--ink); --fill: var(--ink); }
+.btn-secondary:hover { color: var(--deep); }
+.on-dark .btn-secondary { color: var(--ink); --fill: var(--ink); }
+.eyebrow.pill, .crumb { background: rgb(11 11 13 / 0.5); border-color: rgb(255 255 255 / 0.22); color: var(--ink); text-transform: uppercase; letter-spacing: 0.14em; font-size: 12px; font-weight: 700; padding: 7px 14px; }
+.eyebrow { color: var(--ink); }
+.ground-wash { background-color: var(--brand); }
+.tape { display: inline-block; font-family: var(--f-script); background: var(--accent); color: var(--accent-ink); padding: 6px 14px 4px; font-size: 20px; line-height: 1.2; box-shadow: 4px 4px 0 var(--pink); white-space: nowrap; }
+.tape.pink { background: var(--pink); box-shadow: 4px 4px 0 var(--accent); }
+.poster { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; line-height: 0.86; letter-spacing: -0.005em; color: var(--ink); text-wrap: balance; }
+.poster-h2 { font-size: clamp(3rem, 1rem + 6vw, 7rem); }
+.g { color: var(--accent); }
+.ol { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+.grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.18; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.field label { color: var(--ink) !important; }
+.field input, .field textarea { background: var(--card) !important; color: var(--ink) !important; }

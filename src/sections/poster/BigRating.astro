@@ -1,0 +1,39 @@
+---
+// Poster / BigRating. Harvest candidate from SA Premium Plus Printing (Nov 2026). The Google rating as a giant
+// outlined numeral beside real reviews in accent edged quotes. Reviews come from src/data/reviews.ts, word for word,
+// and stay in square brackets until real ones are copied in. Fingerprint: layout split-left, headline numeral-outlined,
+// density low, background deep-plain, effect none, mood bold.
+import { SITE } from '../../data/site';
+import { REVIEWS } from '../../data/reviews';
+interface Props { pill?: string; count?: number; id?: string }
+const { pill = 'What customers say', count = 3, id } = Astro.props;
+---
+<section class="sec big-sec on-dark" id={id}>
+  <div class="wrap big-grid">
+    <div class="big-num">
+      <p class="big48" aria-hidden="true">{SITE.rating}</p>
+      <p class="big-meta"><span class="stars" aria-hidden="true">{[1,2,3,4,5].map(() => <svg><use href="#i-star"/></svg>)}</span><span>{SITE.rating} stars from {SITE.reviewCount} Google reviews</span></p>
+    </div>
+    <div class="big-list">
+      <h2 class="eyebrow pill">{pill}</h2>
+      <ul class="rlist">{REVIEWS.slice(0, count).map((r) => <li><blockquote>{r.text}</blockquote><cite>{r.author}</cite></li>)}</ul>
+      <a class="btn btn-secondary" href={SITE.googleReviews} rel="noopener">Read all {SITE.reviewCount} on Google</a>
+    </div>
+  </div>
+</section>
+<style>
+  .big-sec { padding-top: 40px; }
+  .big-grid { display: grid; grid-template-columns: auto 1fr; gap: 70px; align-items: center; }
+  .big48 { font-family: var(--f-display); font-weight: 900; font-size: clamp(9rem, 4rem + 12vw, 17rem); line-height: 0.75; color: transparent; -webkit-text-stroke: 3px var(--accent); }
+  .big-meta { display: flex; align-items: center; gap: 10px; margin-top: 18px; color: var(--muted); font-size: 15px; }
+  .stars { display: inline-flex; gap: 2px; color: var(--accent); }
+  .stars svg { width: 16px; height: 16px; }
+  .big-list { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; text-align: left; }
+  .big-list h2 { margin: 0; }
+  .rlist { list-style: none; padding: 0; display: grid; gap: 16px; }
+  .rlist li { border-left: 4px solid var(--accent); padding: 6px 0 6px 20px; }
+  .rlist blockquote { margin: 0; color: var(--on-deep); font-size: 18px; }
+  .rlist cite { display: block; margin-top: 6px; color: var(--muted); font-style: normal; font-size: 14px; }
+  @media (max-width: 1000px) { .big-grid { grid-template-columns: 1fr; gap: 40px; justify-items: center; } .big-meta { justify-content: center; flex-wrap: wrap; } }
+  @media (max-width: 600px) { .big48 { font-size: 9rem; } .big-list { align-items: center; } .rlist blockquote { font-size: 16px; } }
+</style>

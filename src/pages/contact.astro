@@ -1,44 +1,57 @@
 ---
-// Contact page. The form posts to the client's inbox through FormSubmit (never to Rigal Media); the client
-// clicks the activation email at launch. Never submit this form from a preview (it binds activation per domain).
+// Contact. Call, book a call, DM on Instagram, or visit. The form appears once the shop's inbox is set in
+// src/data/site.ts (SITE.email); it posts through FormSubmit to that inbox, never to Rigal Media.
 import Base from '../layouts/Base.astro';
 import Banner from '../sections/banner/Banner.astro';
-import AreaMap from '../sections/areas/AreaMap.astro';
-import MaskReveal from '../effects/MaskReveal.astro';
-import { SITE } from '../data/site';
+import { SITE, directionsUrl } from '../data/site';
+const mapSrc = `https://www.google.com/maps?q=place_id:${SITE.placeId}&output=embed`;
 ---
-<Base title={`Contact | ${SITE.short}`} description={`Call, text or message ${SITE.short} in ${SITE.city}. ${SITE.phone}.`} path="/contact">
-  <Banner crumbs={[{ name: 'Contact', href: '/contact' }]} eyebrow={`Contact ${SITE.short}, ${SITE.city}, ${SITE.region}`} headline="Tell us what you are seeing" line={`Call ${SITE.phone}, or send the form and we reply during office hours, ${SITE.hours.text}.`} primary={{ label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` }} />
-  <section class="sec ground-card">
-    <div class="wrap split" style="align-items: start">
-      <form class="form" action={`https://formsubmit.co/${SITE.email}`} method="POST">
-        <input type="hidden" name="_next" value={`${SITE.domain}/thank-you`}>
-        <input type="hidden" name="_subject" value={`Website message for ${SITE.short}`}>
-        <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
-        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
-        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email"></div>
-        <div class="field"><label for="message">What is going on</label><textarea id="message" name="message" rows="5" required></textarea></div>
-        <div class="btnrow"><button class="btn btn-primary" type="submit">Send the message</button></div>
-      </form>
-      <div class="stack">
-        <MaskReveal shape="arch" label="Office or crew photo" />
-        <h2 class="h3">Office</h2>
+<Base title={`Contact SA Premium Plus Printing, San Antonio, TX`} description={`Call ${SITE.phone}, book a call, DM on Instagram or visit 4135 Stahl Rd, Suite 6, San Antonio, TX 78217.`} path="/contact" overlayHeader>
+  <Banner crumbs={[{ name: 'Contact', href: '/contact' }]} eyebrow={`Print shop in ${SITE.city}, ${SITE.region}`} headline="Bring the idea to Stahl Road" keyword="Stahl Road" keywordVariant="fill" line={`Call ${SITE.phone}, book a call, or send a DM. Open ${SITE.hours.text}.`} media={{ src: '/images/work/rack.webp' }} secondary={{ label: `Call ${SITE.phone}`, href: `tel:${SITE.phoneE164}` }} proof={`${SITE.rating} stars from ${SITE.reviewCount} Google reviews`} />
+  <section class="sec on-dark">
+    <div class="wrap ct-grid">
+      <div class="ct-cards">
+        <a class="ct-card" href={`tel:${SITE.phoneE164}`}><span class="eyebrow">Call the shop</span><strong class="poster">{SITE.phone}</strong></a>
+        <a class="ct-card" href="/book"><span class="eyebrow">Pick a time</span><strong class="poster">Book a call</strong></a>
+        <a class="ct-card" href={SITE.instagram.dm} rel="noopener"><span class="eyebrow">Send a DM</span><strong class="poster">{SITE.instagram.handle}</strong></a>
+        {SITE.email && (
+          <form class="form" action={`https://formsubmit.co/${SITE.email}`} method="POST">
+            <input type="hidden" name="_next" value={`${SITE.domain}/thank-you`}>
+            <input type="hidden" name="_subject" value={`Website message for ${SITE.short}`}>
+            <div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+            <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+            <div class="field"><label for="message">What do you want printed?</label><textarea id="message" name="message" rows="5" required></textarea></div>
+            <div class="btnrow"><button class="btn btn-primary" type="submit">Send it to the shop</button></div>
+          </form>
+        )}
+      </div>
+      <div class="ct-visit">
+        <h2 class="poster poster-h2">Visit <span class="g">the shop</span></h2>
         <p>{SITE.address.street}<br>{SITE.address.city}, {SITE.address.region} {SITE.address.zip}</p>
-        <p>{SITE.hours.text}</p>
-        <p class="contact-links"><a href={`tel:${SITE.phoneE164}`}>{SITE.phone}</a><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+        <dl class="ct-hours"><div><dt>Monday to Friday</dt><dd>11 AM to 7 PM</dd></div><div><dt>Saturday</dt><dd>12 PM to 3 PM</dd></div><div><dt>Sunday</dt><dd>Closed</dd></div></dl>
+        <a class="btn btn-secondary" href={directionsUrl()} target="_blank" rel="noopener">Get directions</a>
+        <div class="ct-map"><iframe title={`Map of ${SITE.name}`} src={mapSrc} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
       </div>
     </div>
   </section>
-  <AreaMap eyebrow="Find us" headline="On the map" line="Tap the map for turn by turn directions." />
 </Base>
 <style>
-  .form { display: grid; gap: var(--s-4); text-align: left; }
-  .contact-links { display: flex; flex-direction: column; gap: 4px; }
-  .contact-links a { display: inline-flex; align-items: center; min-height: 44px; }
-  .stack :global(.frame) { max-width: 320px; aspect-ratio: 4 / 3; }
+  .ct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .ct-cards { display: grid; gap: 16px; }
+  .ct-card { display: flex; flex-direction: column; gap: 8px; padding: 26px 28px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); text-decoration: none; color: var(--ink); transition: border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); text-align: left; }
+  .ct-card:hover { border-color: var(--accent); transform: translateY(-3px); color: var(--ink); }
+  .ct-card strong { font-size: clamp(2.2rem, 1rem + 2.8vw, 3.4rem); line-height: 0.95; overflow-wrap: anywhere; }
+  .ct-visit { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; text-align: left; }
+  .ct-visit p { color: var(--on-deep); font-size: 18px; }
+  .ct-hours { margin: 0; display: grid; gap: 6px; min-width: 280px; }
+  .ct-hours div { display: flex; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); padding: 6px 0; }
+  .ct-hours dt { color: var(--muted); } .ct-hours dd { margin: 0; font-weight: 700; }
+  .ct-map { width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
+  .ct-map iframe { width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(0.9) contrast(0.9); }
+  .form { display: grid; gap: var(--s-4); text-align: left; margin-top: 12px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 13px; font-weight: var(--w-strong); letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand); }
-  .field input, .field textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1.5px solid var(--muted); border-radius: var(--r-btn); padding: 12px 14px; min-height: 50px; width: 100%; }
-  .field textarea { min-height: 140px; resize: vertical; }
-  .field input:focus, .field textarea:focus { outline: 3px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .field label { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .field input, .field textarea { font: inherit; border: 1.5px solid var(--muted); border-radius: var(--r-btn); padding: 12px 14px; min-height: 50px; width: 100%; }
+  @media (max-width: 1000px) { .ct-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .ct-visit { align-items: center; text-align: center; } .ct-hours { width: 100%; min-width: 0; } }
 </style>

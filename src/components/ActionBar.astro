@@ -1,7 +1,7 @@
 ---
 // Rigal signature mobile action bar (ported from the San Pedro North build, Oct 2026).
 // Phone app style Call and Directions tiles plus one primary pill. Shows at every width where the header nav
-// collapses (1100px and below). Without JavaScript the tiles are a plain tel: link and a Google Maps link.
+// collapses (1280px and below). Without JavaScript the tiles are a plain tel: link and a Google Maps link.
 // With JavaScript: Call opens an iPhone style sheet with the live open or closed state; Directions on iPhone and
 // iPad offers Apple Maps or Google Maps. 75 percent scroll gate, inert while hidden, hidden while the menu is open.
 // Focus lesson (spnmhpa): never hand focus back to a tile after a tap; restore only when opened from the keyboard.
@@ -57,7 +57,8 @@ const action = bookingAction(SITE.primaryAction);  // booking on: the pill goes 
         const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
         const now = Number(get('hour')) * 60 + Number(get('minute'));
         const m = (s: string) => { const [a, b] = s.split(':').map(Number); return a * 60 + b; };
-        return (h.days || []).includes(day) && now >= m(h.open) && now < m(h.close);
+        const spans = h.spans || [{ days: h.days || [], open: h.open, close: h.close }];
+        return spans.some((s: { days: number[]; open: string; close: string }) => s.days.includes(day) && now >= m(s.open) && now < m(s.close));
       } catch { return false; }
     }
     const sh = document.createElement('div');
@@ -104,7 +105,7 @@ const action = bookingAction(SITE.primaryAction);  // booking on: the pill goes 
 <style>
   .actbar { display: none; }
   @media print { .actbar { display: none !important; } }
-  @media (max-width: 1100px) {
+  @media (max-width: 1280px) {
     :global(body) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
     .actbar {
       display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 12px;
@@ -129,7 +130,7 @@ const action = bookingAction(SITE.primaryAction);  // booking on: the pill goes 
     :global(html.ab-gate) .actbar:not(.show) { transform: translateY(110%); visibility: hidden; transition: transform 0.3s ease, visibility 0s 0.3s; }
     :global(html.menu-open) .actbar { visibility: hidden; }
   }
-  @media (min-width: 601px) and (max-width: 1100px) { .actbar { grid-template-columns: auto auto minmax(0, 300px); justify-content: center; gap: 14px; } }
+  @media (min-width: 601px) and (max-width: 1280px) { .actbar { grid-template-columns: auto auto minmax(0, 300px); justify-content: center; gap: 14px; } }
   @media (max-width: 360px) {
     .actbar { gap: 8px; padding-left: 10px; padding-right: 10px; }
     .ab-ico { width: 44px; height: 44px; border-radius: 10px; }
