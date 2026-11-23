@@ -13,6 +13,8 @@ selling websites through the shop (Lou, 2026-11-22).
   (`src/data/categories.ts`). A service added or removed on the Google profile is added or removed here too.
 - Photos are Unsplash stock until Raymond sends real ones. Reviews stay in brackets until copied word for word.
 - Shop inbox unknown: `SITE.email` is empty, so the contact form is hidden.
+- Share cards: one per page with the call to action, made by `npm run og` (scripts/og.mjs) after a build, then build again.
+  New page means run it again. Base.astro picks `public/images/og/<slug>.jpg` by path, else default.jpg.
 - Redirects and headers live only in the root `vercel.json`. Keys never go in the repo.
 - Third party embeds the accessibility scan skips: the Google Maps frame on /contact.
 - Harvest candidates: `src/sections/poster/*` (PosterHero, CrossingBands, IndexList, PolaroidWall, ArchFeature,
