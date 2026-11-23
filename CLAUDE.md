@@ -3,8 +3,8 @@
 Client build from the Rigal Astro starter. Portfolio site, no ecommerce. Partnership: Rigal's own investment to test
 selling websites through the shop (Lou, 2026-11-22).
 
-- Production domain: not confirmed yet. `https://sapremiumplusprinting.com` is a provisional placeholder in
-  `astro.config.mjs` and `src/data/site.ts`; change both when Raymond confirms.
+- Production domain: `https://sapremiumprints.com` (apex; www redirects to it). Registered in Rigal's Squarespace
+  account, DNS managed there (Lou, 2026-11-23). Launched 2026-11-23: prelaunch noindex removed.
 - Vercel: project `sa-premium-plus-printing` in team Rigal Media Clients (team_aagKt6Kz9xmnKPtS404Icmot). Preview https://sa-premium-plus-printing.vercel.app (Vercel Authentication on; the Vercel MCP can fetch it). Push to `main` deploys.
 - Client id `sa-premium-plus-printing`. Booking ON (label "Book a call"), Front Desk ON (`src/site.config.ts`).
   Both stay silent or fall back to the call button until the client rows exist in the Booking and Front Desk services.
@@ -13,7 +13,7 @@ selling websites through the shop (Lou, 2026-11-22).
   (`src/data/categories.ts`). A service added or removed on the Google profile is added or removed here too.
 - Photos are Unsplash stock until Raymond sends real ones. Reviews stay in brackets until copied word for word.
 - Shop inbox unknown: `SITE.email` is empty, so the contact form is hidden.
-- Redirects and headers live only in the root `vercel.json` (prelaunch noindex is on). Keys never go in the repo.
+- Redirects and headers live only in the root `vercel.json`. Keys never go in the repo.
 - Third party embeds the accessibility scan skips: the Google Maps frame on /contact.
 - Harvest candidates: `src/sections/poster/*` (PosterHero, CrossingBands, IndexList, PolaroidWall, ArchFeature,
   BigRating, PosterCta).

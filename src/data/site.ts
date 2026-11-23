@@ -8,7 +8,7 @@ export const SITE = {
   logo: '/images/brand/logo-green.png',
   city: 'San Antonio',
   region: 'TX',
-  domain: 'https://sapremiumplusprinting.com', // provisional until the domain is confirmed
+  domain: 'https://sapremiumprints.com',
   phone: '(210) 999-5638',
   phoneE164: '+12109995638',
   email: '',                          // the shop inbox for form messages; empty hides the form

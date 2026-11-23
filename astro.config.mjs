@@ -42,7 +42,7 @@ const HOUSE = [
 ];
 
 export default defineConfig({
-  site: 'https://sapremiumplusprinting.com' /* provisional until Raymond confirms the domain */,
+  site: 'https://sapremiumprints.com',
   trailingSlash: 'never',
   build: { format: 'file' },
   output: 'static',
